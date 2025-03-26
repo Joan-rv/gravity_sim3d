@@ -1,5 +1,6 @@
 #include <fstream>
 #include <iostream>
+#include <iterator>
 #include <sstream>
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
@@ -71,13 +72,14 @@ int main() {
                  &indices[0], GL_STATIC_DRAW);
 
     std::ifstream fvert_shader("../src/sphere.vert");
-    std::stringstream ssvert_shader;
-    ssvert_shader << fvert_shader.rdbuf();
+    std::vector<char> svert_shader(
+        (std::istreambuf_iterator<char>(fvert_shader)),
+        std::istreambuf_iterator<char>());
     fvert_shader.close();
+    const char *cvert_shader = &svert_shader[0];
+    const int cvert_shader_size = svert_shader.size();
     unsigned int vert_shader = glCreateShader(GL_VERTEX_SHADER);
-    std::string svert_shader = ssvert_shader.str();
-    const char *cvert_shader = svert_shader.c_str();
-    glShaderSource(vert_shader, 1, &cvert_shader, NULL);
+    glShaderSource(vert_shader, 1, &cvert_shader, &cvert_shader_size);
     glCompileShader(vert_shader);
     int status;
     glGetShaderiv(vert_shader, GL_COMPILE_STATUS, &status);
@@ -88,13 +90,14 @@ int main() {
         return -1;
     }
     std::ifstream ffrag_shader("../src/sphere.frag");
-    std::stringstream ssfrag_shader;
-    ssfrag_shader << ffrag_shader.rdbuf();
+    std::vector<char> sfrag_shader(
+        (std::istreambuf_iterator<char>(ffrag_shader)),
+        std::istreambuf_iterator<char>());
     ffrag_shader.close();
+    const char *cfrag_shader = &sfrag_shader[0];
+    const int cfrag_shader_size = sfrag_shader.size();
     unsigned int frag_shader = glCreateShader(GL_FRAGMENT_SHADER);
-    std::string sfrag_shader = ssfrag_shader.str();
-    const char *cfrag_shader = sfrag_shader.c_str();
-    glShaderSource(frag_shader, 1, &cfrag_shader, NULL);
+    glShaderSource(frag_shader, 1, &cfrag_shader, &cfrag_shader_size);
     glCompileShader(frag_shader);
     glGetShaderiv(frag_shader, GL_COMPILE_STATUS, &status);
     if (!status) {
