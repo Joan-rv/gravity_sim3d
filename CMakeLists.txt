@@ -23,7 +23,7 @@ FetchContent_MakeAvailable(glfw3 glm)
 
 find_package(OpenGL REQUIRED)
 
-add_library(glad external/glad/glad.c)
-target_include_directories(glad PUBLIC external/glad)
+add_library(glad external/glad/src/glad.c)
+target_include_directories(glad PUBLIC external/glad/include)
 
 target_link_libraries(gravity_sim3d PRIVATE OpenGL::GL glad glfw glm)
