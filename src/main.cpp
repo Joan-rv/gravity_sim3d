@@ -1,11 +1,9 @@
-#include <fstream>
 #include <iostream>
-#include <iterator>
-#include <sstream>
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
 #include <glad/glad.h>
 
+#include "shader.hpp"
 #include "sphere.hpp"
 
 void glfw_error_callback(int error, const char *description);
@@ -71,57 +69,9 @@ int main() {
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(GLuint),
                  &indices[0], GL_STATIC_DRAW);
 
-    std::ifstream fvert_shader("../src/sphere.vert");
-    std::vector<char> svert_shader(
-        (std::istreambuf_iterator<char>(fvert_shader)),
-        std::istreambuf_iterator<char>());
-    fvert_shader.close();
-    const char *cvert_shader = &svert_shader[0];
-    const int cvert_shader_size = svert_shader.size();
-    unsigned int vert_shader = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vert_shader, 1, &cvert_shader, &cvert_shader_size);
-    glCompileShader(vert_shader);
-    int status;
-    glGetShaderiv(vert_shader, GL_COMPILE_STATUS, &status);
-    if (!status) {
-        char info_log[512];
-        glGetShaderInfoLog(vert_shader, 512, NULL, info_log);
-        std::cerr << "Failed to compile vertex shader\n" << info_log << '\n';
-        return -1;
-    }
-    std::ifstream ffrag_shader("../src/sphere.frag");
-    std::vector<char> sfrag_shader(
-        (std::istreambuf_iterator<char>(ffrag_shader)),
-        std::istreambuf_iterator<char>());
-    ffrag_shader.close();
-    const char *cfrag_shader = &sfrag_shader[0];
-    const int cfrag_shader_size = sfrag_shader.size();
-    unsigned int frag_shader = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(frag_shader, 1, &cfrag_shader, &cfrag_shader_size);
-    glCompileShader(frag_shader);
-    glGetShaderiv(frag_shader, GL_COMPILE_STATUS, &status);
-    if (!status) {
-        char info_log[512];
-        glGetShaderInfoLog(frag_shader, 512, NULL, info_log);
-        std::cerr << "Failed to compile fragex shader\n" << info_log << '\n';
-        return -1;
-    }
+    Shader shader("../src/sphere.vert", "../src/sphere.frag");
+    shader.use();
 
-    unsigned int shader = glCreateProgram();
-    glAttachShader(shader, vert_shader);
-    glAttachShader(shader, frag_shader);
-    glLinkProgram(shader);
-    glGetProgramiv(shader, GL_LINK_STATUS, &status);
-    if (!status) {
-        char info_log[512];
-        glGetProgramInfoLog(shader, 512, NULL, info_log);
-        std::cerr << "Failed to link shader\n" << info_log << '\n';
-    }
-
-    glDeleteShader(vert_shader);
-    glDeleteShader(frag_shader);
-
-    glUseProgram(shader);
     while (!glfwWindowShouldClose(window)) {
         glClear(GL_COLOR_BUFFER_BIT);
         glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
