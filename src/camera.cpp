@@ -27,6 +27,11 @@ void Camera::yaw(float yaw) {
     update_vectors();
 }
 
+void Camera::move_left(float magnitude) { position_ -= right_ * magnitude; }
+void Camera::move_right(float magnitude) { position_ += right_ * magnitude; }
+void Camera::move_forward(float magnitude) { position_ += front_ * magnitude; }
+void Camera::move_backward(float magnitude) { position_ -= front_ * magnitude; }
+
 void Camera::update_vectors() {
     front_.x = cos(yaw_) * cos(pitch_);
     front_.y = sin(pitch_);

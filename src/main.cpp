@@ -37,7 +37,7 @@ int main() {
     }
     glfwMakeContextCurrent(window);
     glfwSetCursorPosCallback(window, glfw_cursor_pos_callback);
-    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
         std::cerr << "Failed to load glad\n";
@@ -66,8 +66,25 @@ int main() {
     glm::mat4 projection =
         glm::perspective(static_cast<float>(M_PI_4), 1.0f, 0.1f, 100.0f);
     shader.set_mat4("projection", projection);
+    double last_time = glfwGetTime();
     while (!glfwWindowShouldClose(window)) {
+        double curr_time = glfwGetTime();
+        double dt = curr_time - last_time;
+        last_time = curr_time;
         glClear(GL_COLOR_BUFFER_BIT);
+        if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
+            camera.move_forward(dt);
+        }
+        if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
+            camera.move_backward(dt);
+        }
+        if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
+            camera.move_left(dt);
+        }
+        if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
+            camera.move_right(dt);
+        }
+
         shader.set_mat4("view", camera.view());
         sphere.draw();
         glfwSwapBuffers(window);
