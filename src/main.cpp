@@ -3,6 +3,7 @@
 #include <GLFW/glfw3.h>
 #include <glad/glad.h>
 
+#include "mesh.hpp"
 #include "shader.hpp"
 #include "sphere.hpp"
 
@@ -47,34 +48,16 @@ int main() {
                               nullptr, GL_TRUE);
     }
 
-    auto pair = sphere_vertices(10, 10);
-    std::vector<SphereVertex> &vertices = pair.first;
-    std::vector<unsigned int> &indices = pair.second;
-
-    unsigned int sphere_vao, sphere_vbo, sphere_ebo;
-    glGenVertexArrays(1, &sphere_vao);
-    glBindVertexArray(sphere_vao);
-    glGenBuffers(1, &sphere_vbo);
-    glBindBuffer(GL_ARRAY_BUFFER, sphere_vbo);
-    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(SphereVertex),
-                 &vertices[0], GL_STATIC_DRAW);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(SphereVertex),
-                          (void *)offsetof(SphereVertex, pos));
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(SphereVertex),
-                          (void *)offsetof(SphereVertex, tex_coords));
-    glEnableVertexAttribArray(1);
-    glGenBuffers(1, &sphere_ebo);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, sphere_ebo);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(GLuint),
-                 &indices[0], GL_STATIC_DRAW);
+    auto [vertices, indices] = sphere_vertices(10, 10);
+    Mesh sphere(&vertices[0], vertices.size() * sizeof(SphereVertex),
+                sphere_attributes, indices);
 
     Shader shader("../src/sphere.vert", "../src/sphere.frag");
     shader.use();
 
     while (!glfwWindowShouldClose(window)) {
         glClear(GL_COLOR_BUFFER_BIT);
-        glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
+        sphere.draw();
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
