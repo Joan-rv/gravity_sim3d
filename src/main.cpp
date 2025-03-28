@@ -1,8 +1,10 @@
+#include <glm/ext/matrix_clip_space.hpp>
 #include <iostream>
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
 #include <glad/glad.h>
 
+#include "camera.hpp"
 #include "mesh.hpp"
 #include "shader.hpp"
 #include "sphere.hpp"
@@ -11,6 +13,9 @@ void glfw_error_callback(int error, const char *description);
 void APIENTRY gl_debug_output(GLenum source, GLenum type, unsigned int id,
                               GLenum severity, GLsizei length,
                               const char *message, const void *userParam);
+
+Camera camera({0.0f, 0.0f, -5.0f}, 0.0f, 0.0f);
+void glfw_cursor_pos_callback(GLFWwindow *window, double xpos, double ypos);
 
 int main() {
     glfwSetErrorCallback(glfw_error_callback);
@@ -31,6 +36,8 @@ int main() {
         return -1;
     }
     glfwMakeContextCurrent(window);
+    glfwSetCursorPosCallback(window, glfw_cursor_pos_callback);
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
 
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
         std::cerr << "Failed to load glad\n";
@@ -53,10 +60,15 @@ int main() {
                 sphere_attributes, indices);
 
     Shader shader("../src/sphere.vert", "../src/sphere.frag");
-    shader.use();
 
+    shader.use();
+    shader.set_mat4("model", glm::mat4(1.0f));
+    glm::mat4 projection =
+        glm::perspective(static_cast<float>(M_PI_4), 1.0f, 0.1f, 100.0f);
+    shader.set_mat4("projection", projection);
     while (!glfwWindowShouldClose(window)) {
         glClear(GL_COLOR_BUFFER_BIT);
+        shader.set_mat4("view", camera.view());
         sphere.draw();
         glfwSwapBuffers(window);
         glfwPollEvents();
@@ -64,6 +76,21 @@ int main() {
 
     glfwTerminate();
     return 0;
+}
+
+void glfw_cursor_pos_callback(GLFWwindow *window, double xpos, double ypos) {
+    constexpr float turn_speed = 0.01f;
+    static bool first = false;
+    static double last_xpos;
+    static double last_ypos;
+    if (!first) {
+        float dy = ypos - last_ypos;
+        float dx = xpos - last_xpos;
+        camera.pitch(camera.pitch() + dy * turn_speed);
+        camera.yaw(camera.yaw() + dx * turn_speed);
+    }
+    last_xpos = xpos;
+    last_ypos = ypos;
 }
 
 void glfw_error_callback(int error, const char *description) {

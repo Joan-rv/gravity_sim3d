@@ -1,5 +1,6 @@
 #include <fstream>
 #include <glad/glad.h>
+#include <glm/gtc/type_ptr.hpp>
 #include <iostream>
 #include <vector>
 
@@ -58,6 +59,12 @@ Shader::Shader(const char *vertex_path, const char *fragment_path)
 }
 
 Shader::~Shader() { glDeleteProgram(id_); }
+
+void Shader::set_mat4(const char *name, glm::mat4 value) {
+    assert(current_used_ == id_);
+    int location = glGetUniformLocation(id_, name);
+    glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(value));
+}
 
 void Shader::use() {
     glUseProgram(id_);
