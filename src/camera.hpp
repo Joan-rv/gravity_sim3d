@@ -23,8 +23,8 @@ public:
 
 private:
     void update_vectors();
-    float pitch_, yaw_;
     glm::vec3 position_;
+    float pitch_, yaw_;
     glm::vec3 front_;
     glm::vec3 right_;
     glm::vec3 up_;

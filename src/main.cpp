@@ -9,6 +9,8 @@
 #include "shader.hpp"
 #include "sphere.hpp"
 
+#define UNUSED(x) (void)x
+
 void glfw_error_callback(int error, const char *description);
 void APIENTRY gl_debug_output(GLenum source, GLenum type, unsigned int id,
                               GLenum severity, GLsizei length,
@@ -96,6 +98,7 @@ int main() {
 }
 
 void glfw_cursor_pos_callback(GLFWwindow *window, double xpos, double ypos) {
+    UNUSED(window);
     constexpr float turn_speed = 0.01f;
     static bool first = true;
     static double last_xpos;
@@ -120,6 +123,8 @@ void glfw_error_callback(int error, const char *description) {
 void APIENTRY gl_debug_output(GLenum source, GLenum type, unsigned int id,
                               GLenum severity, GLsizei length,
                               const char *message, const void *userParam) {
+    UNUSED(length);
+    UNUSED(userParam);
     // ignore non-significant error/warning codes
     if (id == 131169 || id == 131185 || id == 131218 || id == 131204)
         return;

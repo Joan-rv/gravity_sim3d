@@ -27,3 +27,9 @@ add_library(glad external/glad/src/glad.c)
 target_include_directories(glad PUBLIC external/glad/include)
 
 target_link_libraries(gravity_sim3d PRIVATE OpenGL::GL glad glfw glm)
+
+if(MSVC)
+    target_compile_options(gravity_sim3d PRIVATE /W4)
+else()
+    target_compile_options(gravity_sim3d PRIVATE -Wall -Wextra -pedantic)
+endif()

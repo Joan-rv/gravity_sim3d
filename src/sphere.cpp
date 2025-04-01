@@ -18,7 +18,7 @@ sphere_vertices(unsigned int stacks, unsigned int sectors) {
                 static_cast<float>(sector) / sectors,
                 static_cast<float>(stack) / stacks,
             };
-            vertices.push_back({.pos = pos, .tex_coords = tex_coords});
+            vertices.push_back({pos, tex_coords});
         }
     }
 
