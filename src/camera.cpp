@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <glm/ext/matrix_transform.hpp>
 
 #include "camera.hpp"
@@ -19,7 +20,8 @@ void Camera::position(glm::vec3 pos) {
     update_vectors();
 }
 void Camera::pitch(float pitch) {
-    pitch_ = pitch;
+    pitch_ = std::clamp(pitch, static_cast<float>(-M_PI_2) + 0.01f,
+                        static_cast<float>(M_PI_2) - 0.01f);
     update_vectors();
 }
 void Camera::yaw(float yaw) {

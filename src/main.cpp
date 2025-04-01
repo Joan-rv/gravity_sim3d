@@ -14,7 +14,7 @@ void APIENTRY gl_debug_output(GLenum source, GLenum type, unsigned int id,
                               GLenum severity, GLsizei length,
                               const char *message, const void *userParam);
 
-Camera camera({0.0f, 0.0f, -5.0f}, 0.0f, 0.0f);
+Camera camera({0.0f, 0.0f, -5.0f}, 0.0f, M_PI_2);
 void glfw_cursor_pos_callback(GLFWwindow *window, double xpos, double ypos);
 
 int main() {
@@ -97,14 +97,16 @@ int main() {
 
 void glfw_cursor_pos_callback(GLFWwindow *window, double xpos, double ypos) {
     constexpr float turn_speed = 0.01f;
-    static bool first = false;
+    static bool first = true;
     static double last_xpos;
     static double last_ypos;
     if (!first) {
-        float dy = ypos - last_ypos;
+        float dy = -(ypos - last_ypos);
         float dx = xpos - last_xpos;
         camera.pitch(camera.pitch() + dy * turn_speed);
         camera.yaw(camera.yaw() + dx * turn_speed);
+    } else {
+        first = false;
     }
     last_xpos = xpos;
     last_ypos = ypos;
