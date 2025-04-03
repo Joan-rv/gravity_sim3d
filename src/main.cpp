@@ -16,12 +16,17 @@
 #define UNUSED(x) (void)x
 
 void glfw_error_callback(int error, const char *description);
+void glfw_framebuffer_size_callback(GLFWwindow *window, int width, int height);
 void APIENTRY gl_debug_output(GLenum source, GLenum type, unsigned int id,
                               GLenum severity, GLsizei length,
                               const char *message, const void *userParam);
 
 Camera camera({0.0f, 0.0f, -5.0f}, 0.0f, M_PI_2);
 void glfw_cursor_pos_callback(GLFWwindow *window, double xpos, double ypos);
+
+const int width = 600;
+const int height = 600;
+float aspect_ratio = static_cast<float>(width) / height;
 
 int main() {
     glfwSetErrorCallback(glfw_error_callback);
@@ -35,7 +40,7 @@ int main() {
     glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, true);
 
     GLFWwindow *window =
-        glfwCreateWindow(600, 600, "gravity_sim3d", NULL, NULL);
+        glfwCreateWindow(width, height, "gravity_sim3d", NULL, NULL);
     if (window == NULL) {
         std::cerr << "Failed to create glfw window\n";
         glfwTerminate();
@@ -44,6 +49,7 @@ int main() {
     glfwMakeContextCurrent(window);
     glfwSetCursorPosCallback(window, glfw_cursor_pos_callback);
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    glfwSetFramebufferSizeCallback(window, glfw_framebuffer_size_callback);
 
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
@@ -78,9 +84,6 @@ int main() {
 
     shader.use();
     shader.set_mat4("model", glm::mat4(1.0f));
-    glm::mat4 projection =
-        glm::perspective(static_cast<float>(M_PI_4), 1.0f, 0.1f, 100.0f);
-    shader.set_mat4("projection", projection);
     double last_time = glfwGetTime();
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     while (!glfwWindowShouldClose(window)) {
@@ -101,6 +104,9 @@ int main() {
             camera.move_right(dt);
         }
 
+        glm::mat4 projection =
+            glm::perspective(static_cast<float>(M_PI_4), 1.0f, 0.1f, 100.0f);
+        shader.set_mat4("projection", projection);
         shader.set_mat4("view", camera.view());
         sphere.draw();
 
@@ -123,6 +129,12 @@ int main() {
     glfwTerminate();
 
     return 0;
+}
+
+void glfw_framebuffer_size_callback(GLFWwindow *window, int width, int height) {
+    UNUSED(window);
+    glViewport(0, 0, width, height);
+    aspect_ratio = static_cast<float>(width) / height;
 }
 
 void glfw_cursor_pos_callback(GLFWwindow *window, double xpos, double ypos) {
