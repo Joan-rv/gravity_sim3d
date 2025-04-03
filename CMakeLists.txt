@@ -26,6 +26,10 @@ find_package(OpenGL REQUIRED)
 add_library(glad external/glad/src/glad.c)
 target_include_directories(glad PUBLIC external/glad/include)
 
+file(GLOB imgui_src external/imgui/*.cpp external/imgui/*.h external/imgui/backends/imgui_impl_glfw.cpp external/imgui/backends/imgui_impl_opengl3.cpp)
+target_sources(gravity_sim3d PRIVATE ${imgui_src})
+target_include_directories(gravity_sim3d PRIVATE external/imgui)
+
 target_link_libraries(gravity_sim3d PRIVATE OpenGL::GL glad glfw glm)
 
 if(MSVC)
