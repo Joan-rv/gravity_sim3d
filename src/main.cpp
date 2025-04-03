@@ -62,6 +62,7 @@ int main() {
     ImGui::CreateContext();
     ImGuiIO &io = ImGui::GetIO();
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+    io.ConfigFlags |= ImGuiConfigFlags_NoMouse;
 
     ImGui::StyleColorsDark();
     ImGui_ImplGlfw_InitForOpenGL(window, true);
@@ -149,18 +150,26 @@ void glfw_key_callback(GLFWwindow *window, int key, int scancode, int action,
     UNUSED(window);
     UNUSED(scancode);
     UNUSED(mods);
+    ImGuiIO &io = ImGui::GetIO();
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
         cursor_shown = true;
+        io.ConfigFlags &= ~ImGuiConfigFlags_NoMouse;
         glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
     }
+    if (io.WantCaptureKeyboard)
+        return;
 }
 
 void glfw_mouse_button_callback(GLFWwindow *window, int button, int action,
                                 int mods) {
     UNUSED(window);
     UNUSED(mods);
+    ImGuiIO &io = ImGui::GetIO();
+    if (io.WantCaptureMouse)
+        return;
     if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
         cursor_shown = false;
+        io.ConfigFlags |= ImGuiConfigFlags_NoMouse;
         glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     }
 }
@@ -176,7 +185,7 @@ void glfw_cursor_pos_callback(GLFWwindow *window, double xpos, double ypos) {
         float dx = xpos - last_xpos;
         camera.pitch(camera.pitch() + dy * turn_speed);
         camera.yaw(camera.yaw() + dx * turn_speed);
-    } else {
+    } else if (first) {
         first = false;
     }
     last_xpos = xpos;
