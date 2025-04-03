@@ -23,6 +23,11 @@ void APIENTRY gl_debug_output(GLenum source, GLenum type, unsigned int id,
 
 Camera camera({0.0f, 0.0f, -5.0f}, 0.0f, M_PI_2);
 void glfw_cursor_pos_callback(GLFWwindow *window, double xpos, double ypos);
+void glfw_key_callback(GLFWwindow *window, int key, int scancode, int action,
+                       int mods);
+void glfw_mouse_button_callback(GLFWwindow *window, int button, int action,
+                                int mods);
+bool cursor_shown = false;
 
 const int width = 600;
 const int height = 600;
@@ -48,6 +53,8 @@ int main() {
     }
     glfwMakeContextCurrent(window);
     glfwSetCursorPosCallback(window, glfw_cursor_pos_callback);
+    glfwSetKeyCallback(window, glfw_key_callback);
+    glfwSetMouseButtonCallback(window, glfw_mouse_button_callback);
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     glfwSetFramebufferSizeCallback(window, glfw_framebuffer_size_callback);
 
@@ -137,13 +144,34 @@ void glfw_framebuffer_size_callback(GLFWwindow *window, int width, int height) {
     aspect_ratio = static_cast<float>(width) / height;
 }
 
+void glfw_key_callback(GLFWwindow *window, int key, int scancode, int action,
+                       int mods) {
+    UNUSED(window);
+    UNUSED(scancode);
+    UNUSED(mods);
+    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
+        cursor_shown = true;
+        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+    }
+}
+
+void glfw_mouse_button_callback(GLFWwindow *window, int button, int action,
+                                int mods) {
+    UNUSED(window);
+    UNUSED(mods);
+    if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
+        cursor_shown = false;
+        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    }
+}
+
 void glfw_cursor_pos_callback(GLFWwindow *window, double xpos, double ypos) {
     UNUSED(window);
     constexpr float turn_speed = 0.01f;
     static bool first = true;
     static double last_xpos;
     static double last_ypos;
-    if (!first) {
+    if (!first && !cursor_shown) {
         float dy = -(ypos - last_ypos);
         float dx = xpos - last_xpos;
         camera.pitch(camera.pitch() + dy * turn_speed);
