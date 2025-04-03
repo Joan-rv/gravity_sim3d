@@ -69,6 +69,7 @@ int main() {
         glm::perspective(static_cast<float>(M_PI_4), 1.0f, 0.1f, 100.0f);
     shader.set_mat4("projection", projection);
     double last_time = glfwGetTime();
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     while (!glfwWindowShouldClose(window)) {
         double curr_time = glfwGetTime();
         double dt = curr_time - last_time;
