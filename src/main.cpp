@@ -18,7 +18,7 @@
 
 void glfw_framebuffer_size_callback(GLFWwindow *window, int width, int height);
 
-Camera camera({0.0f, 0.0f, -5.0f}, 0.0f, M_PI_2);
+Camera camera({0.0f, 0.0f, 5.0f}, 0.0f, -M_PI_2);
 void glfw_cursor_pos_callback(GLFWwindow *window, double xpos, double ypos);
 void glfw_key_callback(GLFWwindow *window, int key, int scancode, int action,
                        int mods);
