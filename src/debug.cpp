@@ -3,6 +3,18 @@
 #include "debug.hpp"
 #include "util.hpp"
 
+void opengl_debug_setup() {
+    int flags;
+    glGetIntegerv(GL_CONTEXT_FLAGS, &flags);
+    if (flags & GL_CONTEXT_FLAG_DEBUG_BIT) {
+        glEnable(GL_DEBUG_OUTPUT);
+        glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+        glDebugMessageCallback(gl_debug_output, nullptr);
+        glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0,
+                              nullptr, GL_TRUE);
+    }
+}
+
 void glfw_error_callback(int error, const char *description) {
     std::cerr << "Error " << error << ": " << description;
     exit(EXIT_FAILURE);

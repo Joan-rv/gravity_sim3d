@@ -71,15 +71,7 @@ int main() {
         return -1;
     }
 
-    int flags;
-    glGetIntegerv(GL_CONTEXT_FLAGS, &flags);
-    if (flags & GL_CONTEXT_FLAG_DEBUG_BIT) {
-        glEnable(GL_DEBUG_OUTPUT);
-        glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
-        glDebugMessageCallback(gl_debug_output, nullptr);
-        glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0,
-                              nullptr, GL_TRUE);
-    }
+    opengl_debug_setup();
 
     auto [vertices, indices] = sphere_vertices(10, 10);
     Mesh sphere_mesh(&vertices[0], vertices.size() * sizeof(SphereVertex),
