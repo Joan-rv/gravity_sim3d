@@ -1,4 +1,5 @@
 #include <glm/ext/matrix_clip_space.hpp>
+#include <glm/ext/matrix_transform.hpp>
 #include <iostream>
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
@@ -81,13 +82,15 @@ int main() {
     }
 
     auto [vertices, indices] = sphere_vertices(10, 10);
-    Mesh sphere(&vertices[0], vertices.size() * sizeof(SphereVertex),
-                sphere_attributes, indices);
+    Mesh sphere_mesh(&vertices[0], vertices.size() * sizeof(SphereVertex),
+                     sphere_attributes, indices);
+
+    std::vector<glm::mat4> spheres = {glm::mat4(1.0f)};
+    float new_sphere_pos[3] = {0};
 
     Shader shader("../src/sphere.vert", "../src/sphere.frag");
 
     shader.use();
-    shader.set_mat4("model", glm::mat4(1.0f));
     double last_time = glfwGetTime();
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     while (!glfwWindowShouldClose(window)) {
@@ -112,12 +115,26 @@ int main() {
             glm::perspective(static_cast<float>(M_PI_4), 1.0f, 0.1f, 100.0f);
         shader.set_mat4("projection", projection);
         shader.set_mat4("view", camera.view());
-        sphere.draw();
+        for (glm::mat4 sphere : spheres) {
+            shader.set_mat4("model", sphere);
+            sphere_mesh.draw();
+        }
 
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
-        ImGui::ShowDemoWindow();
+        {
+            ImGui::Begin("Simulation control window");
+            ImGui::Text("Position");
+            ImGui::InputScalarN("##position", ImGuiDataType_Float,
+                                &new_sphere_pos, 3);
+            if (ImGui::Button("Add planet")) {
+                spheres.push_back(glm::translate(
+                    glm::mat4(1.0f),
+                    {new_sphere_pos[0], new_sphere_pos[1], new_sphere_pos[2]}));
+            }
+            ImGui::End();
+        }
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
