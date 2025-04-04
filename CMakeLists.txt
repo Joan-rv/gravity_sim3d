@@ -4,8 +4,14 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 project(gravity_sim3d LANGUAGES C CXX)
 
-set(sources src/main.cpp src/sphere.cpp src/shader.cpp src/mesh.cpp
-            src/camera.cpp src/debug.cpp)
+set(sources
+    src/main.cpp
+    src/sphere.cpp
+    src/shader.cpp
+    src/mesh.cpp
+    src/camera.cpp
+    src/debug.cpp
+    src/planet.cpp)
 add_executable(gravity_sim3d ${sources})
 
 FetchContent_Declare(
