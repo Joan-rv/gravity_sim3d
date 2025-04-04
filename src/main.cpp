@@ -78,7 +78,6 @@ int main() {
                      sphere_attributes, indices);
 
     std::vector<Planet> planets = {{{0.0f, 0.0f, 0.0f}, 1.0f}};
-    float new_sphere_pos[3] = {0};
 
     Shader shader("../src/sphere.vert", "../src/sphere.frag");
 
@@ -117,13 +116,13 @@ int main() {
         ImGui::NewFrame();
         {
             ImGui::Begin("Simulation control window");
-            ImGui::Text("Position");
-            ImGui::InputScalarN("##position", ImGuiDataType_Float,
-                                &new_sphere_pos, 3);
+            ImGui::Text("Add new planet");
+            static float pos[3] = {0};
+            ImGui::InputScalarN("position", ImGuiDataType_Float, &pos, 3);
+            static float radius = 1.0f;
+            ImGui::InputScalar("radius", ImGuiDataType_Float, &radius);
             if (ImGui::Button("Add planet")) {
-                planets.push_back(
-                    {{new_sphere_pos[0], new_sphere_pos[1], new_sphere_pos[2]},
-                     1.0f});
+                planets.push_back({{pos[0], pos[1], pos[2]}, radius});
             }
             ImGui::End();
         }
