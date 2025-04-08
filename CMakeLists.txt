@@ -11,7 +11,8 @@ set(sources
     src/mesh.cpp
     src/camera.cpp
     src/debug.cpp
-    src/planet.cpp)
+    src/planet.cpp
+    src/controller.cpp)
 add_executable(gravity_sim3d ${sources})
 
 FetchContent_Declare(
