@@ -3,10 +3,15 @@
 #include "util.hpp"
 
 Camera *Controller::camera_ = nullptr;
+float Controller::aspect_ratio_ = 1.0f;
 bool Controller::cursor_shown_ = false;
 
 void Controller::init(GLFWwindow *window, Camera *camera) {
     camera_ = camera;
+    int width, height;
+    glfwGetFramebufferSize(window, &width, &height);
+    glViewport(0, 0, width, height);
+    aspect_ratio_ = static_cast<float>(width) / height;
     glfwSetCursorPosCallback(window, cursor_pos_callback_);
     glfwSetKeyCallback(window, key_callback_);
     glfwSetMouseButtonCallback(window, mouse_button_callback_);
@@ -14,10 +19,13 @@ void Controller::init(GLFWwindow *window, Camera *camera) {
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 }
 
+float Controller::aspect_ratio() { return aspect_ratio_; }
+
 void Controller::framebuffer_size_callback_(GLFWwindow *window, int width,
                                             int height) {
     UNUSED(window);
     glViewport(0, 0, width, height);
+    aspect_ratio_ = static_cast<float>(width) / height;
 }
 
 void Controller::key_callback_(GLFWwindow *window, int key, int scancode,

@@ -7,9 +7,11 @@
 class Controller {
 public:
     static void init(GLFWwindow *window, Camera *camera);
+    static float aspect_ratio();
 
 private:
     static Camera *camera_;
+    static float aspect_ratio_;
     static bool cursor_shown_;
     static void framebuffer_size_callback_(GLFWwindow *window, int width,
                                            int height);

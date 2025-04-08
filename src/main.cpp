@@ -89,7 +89,8 @@ int main() {
         }
 
         glm::mat4 projection =
-            glm::perspective(static_cast<float>(M_PI_4), 1.0f, 0.1f, 100.0f);
+            glm::perspective(static_cast<float>(M_PI_4),
+                             Controller::aspect_ratio(), 0.1f, 100.0f);
         shader.set_mat4("projection", projection);
         shader.set_mat4("view", camera.view());
         for (Planet planet : planets) {
