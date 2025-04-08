@@ -22,7 +22,7 @@ public:
     void move_backward(float magnitude);
 
 private:
-    void update_vectors();
+    void update_vectors_();
     glm::vec3 position_;
     float pitch_, yaw_;
     glm::vec3 front_;
