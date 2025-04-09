@@ -4,7 +4,7 @@
 
 Camera *Controller::camera_ = nullptr;
 float Controller::aspect_ratio_ = 1.0f;
-bool Controller::cursor_shown_ = false;
+bool Controller::paused_ = false;
 
 void Controller::init(GLFWwindow *window, Camera *camera) {
     camera_ = camera;
@@ -21,6 +21,8 @@ void Controller::init(GLFWwindow *window, Camera *camera) {
 
 float Controller::aspect_ratio() { return aspect_ratio_; }
 
+bool Controller::paused() { return paused_; }
+
 void Controller::framebuffer_size_callback_(GLFWwindow *window, int width,
                                             int height) {
     UNUSED(window);
@@ -35,7 +37,7 @@ void Controller::key_callback_(GLFWwindow *window, int key, int scancode,
     UNUSED(mods);
     ImGuiIO &io = ImGui::GetIO();
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
-        cursor_shown_ = true;
+        paused_ = true;
         io.ConfigFlags &= ~ImGuiConfigFlags_NoMouse;
         glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
     }
@@ -51,7 +53,7 @@ void Controller::mouse_button_callback_(GLFWwindow *window, int button,
     if (io.WantCaptureMouse)
         return;
     if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
-        cursor_shown_ = false;
+        paused_ = false;
         io.ConfigFlags |= ImGuiConfigFlags_NoMouse;
         glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     }
@@ -65,7 +67,7 @@ void Controller::cursor_pos_callback_(GLFWwindow *window, double xpos,
     static bool first = true;
     static double last_xpos;
     static double last_ypos;
-    if (!first && !cursor_shown_) {
+    if (!first && !paused_) {
         float dy = -(ypos - last_ypos);
         float dx = xpos - last_xpos;
         camera_->pitch(camera_->pitch() + dy * turn_speed);

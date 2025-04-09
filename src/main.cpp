@@ -94,7 +94,8 @@ int main() {
             camera.move_right(dt);
         }
 
-        sim_update(dt, planets);
+        if (!Controller::paused())
+            sim_update(dt, planets);
 
         glm::mat4 projection =
             glm::perspective(static_cast<float>(M_PI_4),
