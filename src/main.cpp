@@ -14,6 +14,7 @@
 #include "mesh.hpp"
 #include "planet.hpp"
 #include "shader.hpp"
+#include "simulation.hpp"
 #include "sphere.hpp"
 
 const int width = 600;
@@ -63,7 +64,12 @@ int main() {
     Mesh sphere_mesh(&vertices[0], vertices.size() * sizeof(SphereVertex),
                      sphere_attributes, indices);
 
-    std::vector<Planet> planets = {{{0.0f, 0.0f, 0.0f}, 1.0f}};
+    std::vector<Planet> planets = {{{0.0f, 0.0f, 0.0f},
+                                    {0.0f, 0.0f, 0.0f},
+                                    {0.0f, 0.0f, 0.0f},
+                                    static_cast<float>(M_PI),
+                                    1.0f,
+                                    1.0f}};
 
     Shader shader("../src/sphere.vert", "../src/sphere.frag");
 
@@ -88,12 +94,14 @@ int main() {
             camera.move_right(dt);
         }
 
+        sim_update(dt, planets);
+
         glm::mat4 projection =
             glm::perspective(static_cast<float>(M_PI_4),
                              Controller::aspect_ratio(), 0.1f, 100.0f);
         shader.set_mat4("projection", projection);
         shader.set_mat4("view", camera.view());
-        for (Planet planet : planets) {
+        for (const Planet &planet : planets) {
             shader.set_mat4("model", planet.model());
             sphere_mesh.draw();
         }
@@ -109,7 +117,12 @@ int main() {
             static float radius = 1.0f;
             ImGui::InputScalar("radius", ImGuiDataType_Float, &radius);
             if (ImGui::Button("Add planet")) {
-                planets.push_back({{pos[0], pos[1], pos[2]}, radius});
+                planets.push_back({{pos[0], pos[1], pos[2]},
+                                   {0.0f, 0.0f, 0.0f},
+                                   {0.0f, 0.0f, 0.0f},
+                                   static_cast<float>(M_PI) * radius * radius,
+                                   1.0f,
+                                   radius});
             }
             ImGui::End();
         }
