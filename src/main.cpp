@@ -68,7 +68,7 @@ int main() {
                                     {0.0f, 0.0f, 0.0f},
                                     {0.0f, 0.0f, 0.0f},
                                     static_cast<float>(M_PI),
-                                    1.0f,
+                                    0.8f,
                                     1.0f}};
 
     Shader shader("../src/sphere.vert", "../src/sphere.frag");
@@ -122,7 +122,7 @@ int main() {
                                    {0.0f, 0.0f, 0.0f},
                                    {0.0f, 0.0f, 0.0f},
                                    static_cast<float>(M_PI) * radius * radius,
-                                   1.0f,
+                                   0.8f,
                                    radius});
             }
             ImGui::End();
