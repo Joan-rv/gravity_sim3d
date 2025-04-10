@@ -15,6 +15,7 @@
 #include "planet.hpp"
 #include "shader.hpp"
 #include "simulation.hpp"
+#include "skysphere.hpp"
 #include "sphere.hpp"
 
 const int width = 600;
@@ -60,9 +61,17 @@ int main() {
 
     opengl_debug_setup();
 
+    glEnable(GL_DEPTH_TEST);
+
     auto [vertices, indices] = sphere_vertices(20, 20);
     Mesh sphere_mesh(&vertices[0], vertices.size() * sizeof(SphereVertex),
                      sphere_attributes, indices);
+    Shader sphere_shader("../shaders/sphere.vert", "../shaders/sphere.frag");
+
+    Mesh skysphere_mesh(&skysphere_vertices, sizeof(skysphere_vertices),
+                        skysphere_attribs, skysphere_indices);
+    Shader skysphere_shader("../shaders/skysphere.vert",
+                            "../shaders/skysphere.frag");
 
     std::vector<Planet> planets = {{{0.0f, 0.0f, 0.0f},
                                     {0.0f, 0.0f, 0.0f},
@@ -71,16 +80,13 @@ int main() {
                                     0.8f,
                                     1.0f}};
 
-    Shader shader("../shaders/sphere.vert", "../shaders/sphere.frag");
-
-    shader.use();
     double last_time = glfwGetTime();
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     while (!glfwWindowShouldClose(window)) {
         double curr_time = glfwGetTime();
         double dt = curr_time - last_time;
         last_time = curr_time;
-        glClear(GL_COLOR_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
             camera.move_forward(dt);
         }
@@ -97,15 +103,23 @@ int main() {
         if (!Controller::paused())
             sim_update(dt, planets);
 
+        sphere_shader.use();
         glm::mat4 projection =
             glm::perspective(static_cast<float>(M_PI_4),
                              Controller::aspect_ratio(), 0.1f, 100.0f);
-        shader.set_mat4("projection", projection);
-        shader.set_mat4("view", camera.view());
+        sphere_shader.set_mat4("projection", projection);
+        sphere_shader.set_mat4("view", camera.view());
         for (const Planet &planet : planets) {
-            shader.set_mat4("model", planet.model());
+            sphere_shader.set_mat4("model", planet.model());
             sphere_mesh.draw();
         }
+
+        glDepthFunc(GL_LEQUAL);
+        skysphere_shader.use();
+        skysphere_shader.set_mat4("projection", projection);
+        skysphere_shader.set_mat4("view", glm::mat4(glm::mat3(camera.view())));
+        skysphere_mesh.draw();
+        glDepthFunc(GL_LESS);
 
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
