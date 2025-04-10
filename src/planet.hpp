@@ -9,7 +9,7 @@ struct Planet {
     glm::vec3 velocity;
     glm::vec3 forces;
     float mass;
-    float coeff_restitiution;
+    float restitution;
     float radius;
 };
 
