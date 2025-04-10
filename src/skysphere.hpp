@@ -33,9 +33,9 @@ const float skysphere_vertices[] = {
     -1.0f,  1.0f,  1.0f,
 
     -1.0f, -1.0f, -1.0f,
+    -1.0f, -1.0f,  1.0f,
+     1.0f, -1.0f,  1.0f,
      1.0f, -1.0f, -1.0f,
-    -1.0f, -1.0f,  1.0f,
-    -1.0f, -1.0f,  1.0f,
     // clang-format on
 };
 

@@ -62,6 +62,7 @@ int main() {
     opengl_debug_setup();
 
     glEnable(GL_DEPTH_TEST);
+    glEnable(GL_CULL_FACE);
 
     auto [vertices, indices] = sphere_vertices(20, 20);
     Mesh sphere_mesh(&vertices[0], vertices.size() * sizeof(SphereVertex),
