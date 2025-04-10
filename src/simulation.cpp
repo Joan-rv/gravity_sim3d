@@ -4,8 +4,8 @@
 
 void sim_update(float dt, std::vector<Planet> &planets) {
     for (size_t i = 0; i < planets.size(); i++) {
+        Planet &p1 = planets[i];
         for (size_t j = i + 1; j < planets.size(); j++) {
-            Planet &p1 = planets[i];
             Planet &p2 = planets[j];
             glm::vec3 vec = p2.position - p1.position;
 
