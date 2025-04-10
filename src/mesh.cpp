@@ -14,7 +14,7 @@ Mesh::Mesh(const void *data, size_t size,
     glGenVertexArrays(1, &vao_);
     glBindVertexArray(vao_);
     glGenBuffers(1, &vbo_);
-    glBindBuffer(GL_ARRAY_BUFFER, vao_);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo_);
     glBufferData(GL_ARRAY_BUFFER, size, data, GL_STATIC_DRAW);
     for (const VertexAttribute &attribute : attributes) {
         glVertexAttribPointer(attribute.index, attribute.size, attribute.type,
