@@ -60,7 +60,7 @@ int main() {
 
     opengl_debug_setup();
 
-    auto [vertices, indices] = sphere_vertices(10, 10);
+    auto [vertices, indices] = sphere_vertices(20, 20);
     Mesh sphere_mesh(&vertices[0], vertices.size() * sizeof(SphereVertex),
                      sphere_attributes, indices);
 
