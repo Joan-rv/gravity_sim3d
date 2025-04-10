@@ -17,6 +17,7 @@
 #include "simulation.hpp"
 #include "skysphere.hpp"
 #include "sphere.hpp"
+#include "texture.hpp"
 
 const int width = 600;
 const int height = 600;
@@ -73,6 +74,7 @@ int main() {
                         skysphere_attribs, skysphere_indices);
     Shader skysphere_shader("../shaders/skysphere.vert",
                             "../shaders/skysphere.frag");
+    Texture skysphere_texture("../textures/subdued_blue_nebulae_1.png");
 
     std::vector<Planet> planets = {{{0.0f, 0.0f, 0.0f},
                                     {0.0f, 0.0f, 0.0f},
@@ -119,6 +121,8 @@ int main() {
         skysphere_shader.use();
         skysphere_shader.set_mat4("projection", projection);
         skysphere_shader.set_mat4("view", glm::mat4(glm::mat3(camera.view())));
+        skysphere_texture.use(0);
+        skysphere_shader.set_int("skysphere", 0);
         skysphere_mesh.draw();
         glDepthFunc(GL_LESS);
 

@@ -12,6 +12,7 @@ public:
     Shader &operator=(const Shader &) = delete;
 
     void set_mat4(const char *name, glm::mat4 value);
+    void set_int(const char *name, int value);
 
     void use();
 
