@@ -7,8 +7,9 @@ Mesh::~Mesh() {
     glDeleteBuffers(1, &ebo_);
 }
 
-Mesh::Mesh(void *data, size_t size, std::vector<VertexAttribute> attributes,
-           std::vector<unsigned int> indices)
+Mesh::Mesh(const void *data, size_t size,
+           const std::vector<VertexAttribute> &attributes,
+           const std::vector<unsigned int> &indices)
     : ebo_size_(indices.size()) {
     glGenVertexArrays(1, &vao_);
     glBindVertexArray(vao_);

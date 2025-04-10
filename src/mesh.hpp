@@ -17,8 +17,9 @@ class Mesh {
 public:
     Mesh();
     ~Mesh();
-    Mesh(void *data, size_t size, std::vector<VertexAttribute> attributes,
-         std::vector<unsigned int> indices);
+    Mesh(const void *data, size_t size,
+         const std::vector<VertexAttribute> &attributes,
+         const std::vector<unsigned int> &indices);
     void draw();
 
 private:
