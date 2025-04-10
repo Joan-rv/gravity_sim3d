@@ -71,7 +71,7 @@ int main() {
                                     0.8f,
                                     1.0f}};
 
-    Shader shader("../src/sphere.vert", "../src/sphere.frag");
+    Shader shader("../shaders/sphere.vert", "../shaders/sphere.frag");
 
     shader.use();
     double last_time = glfwGetTime();
