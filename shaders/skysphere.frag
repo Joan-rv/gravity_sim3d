@@ -13,5 +13,4 @@ void main() {
     float u = 0.5 + atan(n_pos.z, n_pos.x) / (2 * M_PI);
     float v = 0.5 + asin(n_pos.y) / M_PI;
     frag_color = texture(skysphere, vec2(u, v));
-    //frag_color = vec4(1.0, 0.1, 0.4, 1.0);
 }

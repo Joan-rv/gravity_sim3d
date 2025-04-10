@@ -4,7 +4,8 @@
 #include <vector>
 
 #include "mesh.hpp"
-// adapted from https://learnopengl.com/Advanced-OpenGL/Cubemaps
+// adapted from
+// https://learnopengl.com/code_viewer.php?code=advanced/cubemaps_skybox_data
 const float skysphere_vertices[] = {
     // clang-format off
     -1.0f,  1.0f, -1.0f,
