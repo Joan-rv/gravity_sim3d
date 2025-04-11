@@ -1,3 +1,4 @@
+#include "util.hpp"
 #include <glm/ext/matrix_clip_space.hpp>
 #include <iostream>
 #define GLFW_INCLUDE_NONE
@@ -68,13 +69,14 @@ int main() {
     auto [vertices, indices] = sphere_vertices(20, 20);
     Mesh sphere_mesh(&vertices[0], vertices.size() * sizeof(SphereVertex),
                      sphere_attributes, indices);
-    Shader sphere_shader("../shaders/sphere.vert", "../shaders/sphere.frag");
+    Shader sphere_shader(DATAPATH("shaders/sphere.vert"),
+                         DATAPATH("shaders/sphere.frag"));
 
     Mesh skysphere_mesh(&skysphere_vertices, sizeof(skysphere_vertices),
                         skysphere_attribs, skysphere_indices);
-    Shader skysphere_shader("../shaders/skysphere.vert",
-                            "../shaders/skysphere.frag");
-    Texture skysphere_texture("../textures/subdued_blue_nebulae_1.png");
+    Shader skysphere_shader(DATAPATH("shaders/skysphere.vert"),
+                            DATAPATH("shaders/skysphere.frag"));
+    Texture skysphere_texture(DATAPATH("textures/subdued_blue_nebulae_1.png"));
 
     std::vector<Planet> planets = {{{0.0f, 0.0f, 0.0f},
                                     {0.0f, 0.0f, 0.0f},
