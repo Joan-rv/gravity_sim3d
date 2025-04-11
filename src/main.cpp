@@ -136,13 +136,19 @@ int main() {
             ImGui::InputScalarN("position", ImGuiDataType_Float, &pos, 3);
             static float radius = 1.0f;
             ImGui::InputScalar("radius", ImGuiDataType_Float, &radius);
+            static float density = 1.0f;
+            ImGui::InputScalar("density", ImGuiDataType_Float, &density);
+            ImGui::Text("Mass: %f",
+                        density * static_cast<float>(M_PI) * radius * radius);
+
             if (ImGui::Button("Add planet")) {
-                planets.push_back({{pos[0], pos[1], pos[2]},
-                                   {0.0f, 0.0f, 0.0f},
-                                   {0.0f, 0.0f, 0.0f},
-                                   static_cast<float>(M_PI) * radius * radius,
-                                   0.8f,
-                                   radius});
+                planets.push_back(
+                    {{pos[0], pos[1], pos[2]},
+                     {0.0f, 0.0f, 0.0f},
+                     {0.0f, 0.0f, 0.0f},
+                     density * static_cast<float>(M_PI) * radius * radius,
+                     0.8f,
+                     radius});
             }
             ImGui::End();
         }
