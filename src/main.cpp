@@ -23,6 +23,8 @@
 const int width = 600;
 const int height = 600;
 
+const float movement_speed = 2.0f;
+
 int main() {
     glfwSetErrorCallback(glfw_error_callback);
     if (!glfwInit()) {
@@ -93,16 +95,16 @@ int main() {
         last_time = curr_time;
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
-            camera.move_forward(dt);
+            camera.move_forward(movement_speed * dt);
         }
         if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
-            camera.move_backward(dt);
+            camera.move_backward(movement_speed * dt);
         }
         if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
-            camera.move_left(dt);
+            camera.move_left(movement_speed * dt);
         }
         if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
-            camera.move_right(dt);
+            camera.move_right(movement_speed * dt);
         }
 
         if (!Controller::paused())
