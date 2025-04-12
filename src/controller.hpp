@@ -1,8 +1,9 @@
 #ifndef CONTROLLER_HPP
 #define CONTROLLER_HPP
 
-#include "camera.hpp"
 #include <GLFW/glfw3.h>
+
+class Camera;
 
 class Controller {
 public:

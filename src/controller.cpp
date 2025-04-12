@@ -1,5 +1,7 @@
+#include <imgui.h>
+
+#include "camera.hpp"
 #include "controller.hpp"
-#include "imgui.h"
 #include "util.hpp"
 
 Camera *Controller::camera_ = nullptr;

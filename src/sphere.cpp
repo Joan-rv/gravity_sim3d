@@ -1,5 +1,7 @@
-#include "sphere.hpp"
 #include <vector>
+
+#include "mesh.hpp"
+#include "sphere.hpp"
 
 struct SphereVertex {
     glm::vec3 pos;
