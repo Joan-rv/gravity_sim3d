@@ -88,10 +88,13 @@ int main() {
                                     1.0f}};
 
     double last_time = glfwGetTime();
+    double accumulator = 0.0;
+    const double fixed_dt = 0.01;
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     while (!glfwWindowShouldClose(window)) {
         double curr_time = glfwGetTime();
         double dt = curr_time - last_time;
+        accumulator += dt;
         last_time = curr_time;
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
@@ -107,8 +110,10 @@ int main() {
             camera.move_right(movement_speed * dt);
         }
 
-        if (!Controller::paused())
-            sim_update(dt, planets);
+        while (!Controller::paused() && accumulator >= fixed_dt) {
+            sim_update(fixed_dt, planets);
+            accumulator -= fixed_dt;
+        }
 
         sphere_shader.use();
         glm::mat4 projection =
