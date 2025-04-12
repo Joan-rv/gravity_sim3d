@@ -68,9 +68,7 @@ int main() {
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
 
-    auto [vertices, indices] = sphere_vertices(20, 20);
-    Mesh sphere_mesh(&vertices[0], vertices.size() * sizeof(SphereVertex),
-                     sphere_attributes, indices);
+    Mesh sphere_mesh = gen_sphere_mesh(20, 20);
     Shader sphere_shader(DATAPATH("shaders/sphere.vert"),
                          DATAPATH("shaders/sphere.frag"));
 
