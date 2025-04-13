@@ -7,22 +7,28 @@ class Camera;
 
 class Controller {
 public:
-    static void init(GLFWwindow *window, Camera *camera);
-    static float aspect_ratio();
-    static bool paused();
+    Controller(GLFWwindow *window, Camera &camera);
+    float aspect_ratio();
+    bool paused();
 
 private:
-    static Camera *camera_;
-    static float aspect_ratio_;
-    static bool paused_;
-    static void framebuffer_size_callback_(GLFWwindow *window, int width,
-                                           int height);
-    static void key_callback_(GLFWwindow *window, int key, int scancode,
-                              int action, int mods);
-    static void mouse_button_callback_(GLFWwindow *window, int button,
-                                       int action, int mods);
-    static void cursor_pos_callback_(GLFWwindow *window, double xpos,
-                                     double ypos);
+    Camera &camera_;
+    float aspect_ratio_;
+    bool paused_;
+    void framebuffer_size_callback_(int width, int height);
+    static void glfw_framebuffer_size_callback_(GLFWwindow *window, int width,
+                                                int height);
+    void key_callback_(GLFWwindow *window, int key, int scancode, int action,
+                       int mods);
+    static void glfw_key_callback_(GLFWwindow *window, int key, int scancode,
+                                   int action, int mods);
+    void mouse_button_callback_(GLFWwindow *window, int button, int action,
+                                int mods);
+    static void glfw_mouse_button_callback_(GLFWwindow *window, int button,
+                                            int action, int mods);
+    void cursor_pos_callback_(double xpos, double ypos);
+    static void glfw_cursor_pos_callback_(GLFWwindow *window, double xpos,
+                                          double ypos);
 };
 
 #endif

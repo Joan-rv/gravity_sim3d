@@ -46,7 +46,7 @@ int main() {
     }
     glfwMakeContextCurrent(window);
     Camera camera({0.0f, 0.0f, 5.0f}, 0.0f, -M_PI_2);
-    Controller::init(window, &camera);
+    Controller controller(window, camera);
 
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
@@ -114,7 +114,7 @@ int main() {
             camera.move_right(movement_speed * dt);
         }
 
-        while (!Controller::paused() && accumulator >= fixed_dt) {
+        while (!controller.paused() && accumulator >= fixed_dt) {
             sim_update(fixed_dt, planets);
             accumulator -= fixed_dt;
         }
@@ -122,7 +122,7 @@ int main() {
         sphere_shader.use();
         glm::mat4 projection =
             glm::perspective(static_cast<float>(M_PI_4),
-                             Controller::aspect_ratio(), 0.1f, 100.0f);
+                             controller.aspect_ratio(), 0.1f, 100.0f);
         sphere_shader.set_mat4("projection", projection);
         sphere_shader.set_mat4("view", camera.view());
         for (const Planet &planet : planets) {

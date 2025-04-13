@@ -1,40 +1,41 @@
+#include <GLFW/glfw3.h>
 #include <imgui.h>
 
 #include "camera.hpp"
 #include "controller.hpp"
 #include "util.hpp"
 
-Camera *Controller::camera_ = nullptr;
-float Controller::aspect_ratio_ = 1.0f;
-bool Controller::paused_ = false;
-
-void Controller::init(GLFWwindow *window, Camera *camera) {
-    camera_ = camera;
+Controller::Controller(GLFWwindow *window, Camera &camera)
+    : camera_(camera), paused_(false) {
     int width, height;
     glfwGetFramebufferSize(window, &width, &height);
     glViewport(0, 0, width, height);
     aspect_ratio_ = static_cast<float>(width) / height;
-    glfwSetCursorPosCallback(window, cursor_pos_callback_);
-    glfwSetKeyCallback(window, key_callback_);
-    glfwSetMouseButtonCallback(window, mouse_button_callback_);
-    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback_);
+    glfwSetCursorPosCallback(window, glfw_cursor_pos_callback_);
+    glfwSetKeyCallback(window, glfw_key_callback_);
+    glfwSetMouseButtonCallback(window, glfw_mouse_button_callback_);
+    glfwSetFramebufferSizeCallback(window, glfw_framebuffer_size_callback_);
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    glfwSetWindowUserPointer(window, this);
 }
 
 float Controller::aspect_ratio() { return aspect_ratio_; }
 
 bool Controller::paused() { return paused_; }
 
-void Controller::framebuffer_size_callback_(GLFWwindow *window, int width,
-                                            int height) {
-    UNUSED(window);
+void Controller::framebuffer_size_callback_(int width, int height) {
     glViewport(0, 0, width, height);
     aspect_ratio_ = static_cast<float>(width) / height;
+}
+void Controller::glfw_framebuffer_size_callback_(GLFWwindow *window, int width,
+                                                 int height) {
+    Controller *self =
+        reinterpret_cast<Controller *>(glfwGetWindowUserPointer(window));
+    self->framebuffer_size_callback_(width, height);
 }
 
 void Controller::key_callback_(GLFWwindow *window, int key, int scancode,
                                int action, int mods) {
-    UNUSED(window);
     UNUSED(scancode);
     UNUSED(mods);
     ImGuiIO &io = ImGui::GetIO();
@@ -45,6 +46,12 @@ void Controller::key_callback_(GLFWwindow *window, int key, int scancode,
     }
     if (io.WantCaptureKeyboard)
         return;
+}
+void Controller::glfw_key_callback_(GLFWwindow *window, int key, int scancode,
+                                    int action, int mods) {
+    Controller *self =
+        reinterpret_cast<Controller *>(glfwGetWindowUserPointer(window));
+    self->key_callback_(window, key, scancode, action, mods);
 }
 
 void Controller::mouse_button_callback_(GLFWwindow *window, int button,
@@ -60,11 +67,14 @@ void Controller::mouse_button_callback_(GLFWwindow *window, int button,
         glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     }
 }
+void Controller::glfw_mouse_button_callback_(GLFWwindow *window, int button,
+                                             int action, int mods) {
+    Controller *self =
+        reinterpret_cast<Controller *>(glfwGetWindowUserPointer(window));
+    self->mouse_button_callback_(window, button, action, mods);
+}
 
-void Controller::cursor_pos_callback_(GLFWwindow *window, double xpos,
-                                      double ypos) {
-    UNUSED(window);
-    assert(camera_);
+void Controller::cursor_pos_callback_(double xpos, double ypos) {
     constexpr float turn_speed = 0.01f;
     static bool first = true;
     static double last_xpos;
@@ -72,11 +82,17 @@ void Controller::cursor_pos_callback_(GLFWwindow *window, double xpos,
     if (!first && !paused_) {
         float dy = -(ypos - last_ypos);
         float dx = xpos - last_xpos;
-        camera_->pitch(camera_->pitch() + dy * turn_speed);
-        camera_->yaw(camera_->yaw() + dx * turn_speed);
+        camera_.pitch(camera_.pitch() + dy * turn_speed);
+        camera_.yaw(camera_.yaw() + dx * turn_speed);
     } else if (first) {
         first = false;
     }
     last_xpos = xpos;
     last_ypos = ypos;
+}
+void Controller::glfw_cursor_pos_callback_(GLFWwindow *window, double xpos,
+                                           double ypos) {
+    Controller *self =
+        reinterpret_cast<Controller *>(glfwGetWindowUserPointer(window));
+    self->cursor_pos_callback_(xpos, ypos);
 }
