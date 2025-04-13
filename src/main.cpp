@@ -1,3 +1,4 @@
+#include "arrow.hpp"
 #include "util.hpp"
 #include <glm/ext/matrix_clip_space.hpp>
 #include <iostream>
@@ -78,12 +79,17 @@ int main() {
                             DATAPATH("shaders/skysphere.frag"));
     Texture skysphere_texture(DATAPATH("textures/subdued_blue_nebulae_1.png"));
 
+    Mesh arrow_mesh = gen_arrow(0.2, 0.2, 20);
+
+    /*
     std::vector<Planet> planets = {{{0.0f, 0.0f, 0.0f},
                                     {0.0f, 0.0f, 0.0f},
                                     {0.0f, 0.0f, 0.0f},
                                     static_cast<float>(M_PI),
                                     0.8f,
                                     1.0f}};
+    */
+    std::vector<Planet> planets;
 
     double last_time = glfwGetTime();
     double accumulator = 0.0;
@@ -123,6 +129,9 @@ int main() {
             sphere_shader.set_mat4("model", planet.model());
             sphere_mesh.draw();
         }
+
+        sphere_shader.set_mat4("model", glm::mat4(1.0f));
+        arrow_mesh.draw();
 
         glDepthFunc(GL_LEQUAL);
         skysphere_shader.use();

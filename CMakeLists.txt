@@ -14,7 +14,8 @@ set(sources
     src/planet.cpp
     src/controller.cpp
     src/simulation.cpp
-    src/texture.cpp)
+    src/texture.cpp
+    src/arrow.cpp)
 add_executable(gravity_sim3d ${sources})
 
 FetchContent_Declare(
