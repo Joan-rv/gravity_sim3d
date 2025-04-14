@@ -10,7 +10,7 @@ class Shader;
 class Arrow {
 public:
     Arrow(float tip_width, float stem_width, size_t resolution);
-    void draw(Shader &shader);
+    void draw(Shader &shader) const;
 
 private:
     Mesh stem_;

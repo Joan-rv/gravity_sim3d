@@ -20,7 +20,7 @@ public:
     Mesh(const void *data, size_t size,
          const std::vector<VertexAttribute> &attributes,
          const std::vector<unsigned int> &indices);
-    void draw();
+    void draw() const;
 
 private:
     unsigned int vao_;

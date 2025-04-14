@@ -91,7 +91,7 @@ Arrow::Arrow(float tip_width, float stem_width, size_t resolution)
     : stem_(gen_stem(stem_width, resolution)),
       tip_(gen_tip(tip_width, resolution)) {}
 
-void Arrow::draw(Shader &shader) {
+void Arrow::draw(Shader &shader) const {
     shader.set_mat4("model", glm::mat4(1.0f));
     shader.set_mat4("model", glm::mat4(1.0f));
     stem_.draw();

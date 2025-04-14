@@ -29,7 +29,7 @@ Mesh::Mesh(const void *data, size_t size,
     glBindVertexArray(0);
 }
 
-void Mesh::draw() {
+void Mesh::draw() const {
     glBindVertexArray(vao_);
     glDrawElements(GL_TRIANGLES, ebo_size_, GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
