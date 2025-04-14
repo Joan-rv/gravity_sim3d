@@ -3,8 +3,18 @@
 
 #include <stddef.h>
 
-class Mesh;
+#include "mesh.hpp"
 
-Mesh gen_arrow(float tip_size_ratio, float stem_size_ratio, size_t resolution);
+class Shader;
+
+class Arrow {
+public:
+    Arrow(float tip_width, float stem_width, size_t resolution);
+    void draw(Shader &shader);
+
+private:
+    Mesh stem_;
+    Mesh tip_;
+};
 
 #endif

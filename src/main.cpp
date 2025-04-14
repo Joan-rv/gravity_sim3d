@@ -79,7 +79,7 @@ int main() {
                             DATAPATH("shaders/skysphere.frag"));
     Texture skysphere_texture(DATAPATH("textures/subdued_blue_nebulae_1.png"));
 
-    Mesh arrow_mesh = gen_arrow(0.2, 0.2, 20);
+    Arrow arrow(1.2f, 0.5f, 20);
 
     /*
     std::vector<Planet> planets = {{{0.0f, 0.0f, 0.0f},
@@ -130,8 +130,7 @@ int main() {
             sphere_mesh.draw();
         }
 
-        sphere_shader.set_mat4("model", glm::mat4(1.0f));
-        arrow_mesh.draw();
+        arrow.draw(sphere_shader);
 
         glDepthFunc(GL_LEQUAL);
         skysphere_shader.use();
