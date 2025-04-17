@@ -30,7 +30,7 @@ void Controller::framebuffer_size_callback_(int width, int height) {
 void Controller::glfw_framebuffer_size_callback_(GLFWwindow *window, int width,
                                                  int height) {
     Controller *self =
-        reinterpret_cast<Controller *>(glfwGetWindowUserPointer(window));
+        static_cast<Controller *>(glfwGetWindowUserPointer(window));
     self->framebuffer_size_callback_(width, height);
 }
 
@@ -50,7 +50,7 @@ void Controller::key_callback_(GLFWwindow *window, int key, int scancode,
 void Controller::glfw_key_callback_(GLFWwindow *window, int key, int scancode,
                                     int action, int mods) {
     Controller *self =
-        reinterpret_cast<Controller *>(glfwGetWindowUserPointer(window));
+        static_cast<Controller *>(glfwGetWindowUserPointer(window));
     self->key_callback_(window, key, scancode, action, mods);
 }
 
@@ -70,7 +70,7 @@ void Controller::mouse_button_callback_(GLFWwindow *window, int button,
 void Controller::glfw_mouse_button_callback_(GLFWwindow *window, int button,
                                              int action, int mods) {
     Controller *self =
-        reinterpret_cast<Controller *>(glfwGetWindowUserPointer(window));
+        static_cast<Controller *>(glfwGetWindowUserPointer(window));
     self->mouse_button_callback_(window, button, action, mods);
 }
 
@@ -93,6 +93,6 @@ void Controller::cursor_pos_callback_(double xpos, double ypos) {
 void Controller::glfw_cursor_pos_callback_(GLFWwindow *window, double xpos,
                                            double ypos) {
     Controller *self =
-        reinterpret_cast<Controller *>(glfwGetWindowUserPointer(window));
+        static_cast<Controller *>(glfwGetWindowUserPointer(window));
     self->cursor_pos_callback_(xpos, ypos);
 }
