@@ -18,17 +18,17 @@ set(sources
     src/arrow.cpp)
 add_executable(gravity_sim3d ${sources})
 
-FetchContent_Declare(
+fetchcontent_declare(
   glfw3
   GIT_REPOSITORY https://github.com/glfw/glfw.git
   GIT_TAG 3.4
   FIND_PACKAGE_ARGS 3.4)
-FetchContent_Declare(
+fetchcontent_declare(
   glm
   GIT_REPOSITORY https://github.com/g-truc/glm.git
   GIT_TAG 1.0.1
   FIND_PACKAGE_ARGS 1.0.1)
-FetchContent_MakeAvailable(glfw3 glm)
+fetchcontent_makeavailable(glfw3 glm)
 
 find_package(OpenGL REQUIRED)
 
