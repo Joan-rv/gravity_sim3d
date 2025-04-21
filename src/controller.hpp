@@ -8,6 +8,8 @@ class Camera;
 class Controller {
 public:
     Controller(GLFWwindow *window, Camera &camera);
+    Controller(const Controller &) = delete;
+    Controller &operator=(const Controller &) = delete;
     float aspect_ratio();
     bool paused();
 

@@ -20,6 +20,8 @@ public:
     Mesh(const void *data, size_t size,
          const std::vector<VertexAttribute> &attributes,
          const std::vector<unsigned int> &indices);
+    Mesh(const Mesh &) = delete;
+    Mesh &operator=(const Mesh &) = delete;
     void draw() const;
 
 private:
