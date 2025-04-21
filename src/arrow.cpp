@@ -92,6 +92,8 @@ Arrow::Arrow(float tip_width, float stem_width, size_t resolution)
       tip_(gen_tip(tip_width, resolution)) {}
 
 void Arrow::draw(glm::vec3 origin, glm::vec3 end, Shader &shader) const {
+    assert(shader.is_used());
+
     glm::vec3 dir = end - origin;
     float length = glm::length(dir);
     dir = glm::normalize(dir);

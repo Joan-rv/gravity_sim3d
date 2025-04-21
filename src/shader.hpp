@@ -16,6 +16,7 @@ public:
     void set_int(const char *name, int value);
 
     void use();
+    bool is_used() const;
 
 private:
     static unsigned int current_used_;

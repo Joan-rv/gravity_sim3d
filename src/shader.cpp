@@ -80,3 +80,4 @@ void Shader::use() {
     glUseProgram(id_);
     current_used_ = id_;
 }
+bool Shader::is_used() const { return current_used_ == id_; }
