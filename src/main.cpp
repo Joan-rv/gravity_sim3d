@@ -80,6 +80,10 @@ int main() {
     Texture skysphere_texture(DATAPATH("textures/subdued_blue_nebulae_1.png"));
 
     Arrow arrow(0.8f, 0.3f, 20);
+    Shader arrow_shader(DATAPATH("shaders/arrow.vert"),
+                        DATAPATH("shaders/arrow.frag"));
+    arrow_shader.use();
+    arrow_shader.set_vec4("color", glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
 
     /*
     std::vector<Planet> planets = {{{0.0f, 0.0f, 0.0f},
@@ -119,10 +123,11 @@ int main() {
             accumulator -= fixed_dt;
         }
 
-        sphere_shader.use();
         glm::mat4 projection =
             glm::perspective(static_cast<float>(M_PI_4),
                              controller.aspect_ratio(), 0.1f, 100.0f);
+
+        sphere_shader.use();
         sphere_shader.set_mat4("projection", projection);
         sphere_shader.set_mat4("view", camera.view());
         for (const Planet &planet : planets) {
@@ -130,7 +135,10 @@ int main() {
             sphere_mesh.draw();
         }
 
-        arrow.draw(glm::vec3(0.0f), glm::vec3(1.0f, 0.0f, 1.0f), sphere_shader);
+        arrow_shader.use();
+        arrow_shader.set_mat4("projection", projection);
+        arrow_shader.set_mat4("view", camera.view());
+        arrow.draw(glm::vec3(0.0f), glm::vec3(1.0f, 0.0f, 1.0f), arrow_shader);
 
         glDepthFunc(GL_LEQUAL);
         skysphere_shader.use();
