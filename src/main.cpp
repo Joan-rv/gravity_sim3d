@@ -1,18 +1,8 @@
-#include "arrow.hpp"
-#include "util.hpp"
 #include <glm/ext/matrix_clip_space.hpp>
-#include <iostream>
-#define GLFW_INCLUDE_NONE
-#include <GLFW/glfw3.h>
-#include <glad/glad.h>
 
-#include <backends/imgui_impl_glfw.h>
-#include <backends/imgui_impl_opengl3.h>
-#include <imgui.h>
-
+#include "arrow.hpp"
 #include "camera.hpp"
 #include "controller.hpp"
-#include "debug.hpp"
 #include "mesh.hpp"
 #include "planet.hpp"
 #include "shader.hpp"
@@ -20,54 +10,25 @@
 #include "skysphere.hpp"
 #include "sphere.hpp"
 #include "texture.hpp"
-
-const int width = 600;
-const int height = 600;
-
-const float movement_speed = 2.0f;
+#include "ui.hpp"
+#include "util.hpp"
+#include "window.hpp"
 
 int main() {
-    glfwSetErrorCallback(glfw_error_callback);
-    if (!glfwInit()) {
-        std::cerr << "Failed to initialize glfw\n";
-        return -1;
-    }
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-    glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, true);
+    const float movement_speed = 2.0f;
+    const int width = 600;
+    const int height = 600;
 
-    GLFWwindow *window =
-        glfwCreateWindow(width, height, "gravity_sim3d", NULL, NULL);
-    if (window == NULL) {
-        std::cerr << "Failed to create glfw window\n";
-        glfwTerminate();
+    GLFWwindow *window = window_init(width, height);
+    if (!window) {
         return -1;
     }
-    glfwMakeContextCurrent(window);
+
     Camera camera({0.0f, 0.0f, 5.0f}, 0.0f, -M_PI_2);
+
+    // must be constructed before ImGui to properly register callbacks
     Controller controller(window, camera);
-
-    IMGUI_CHECKVERSION();
-    ImGui::CreateContext();
-    ImGuiIO &io = ImGui::GetIO();
-    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
-    io.ConfigFlags |= ImGuiConfigFlags_NoMouse;
-
-    ImGui::StyleColorsDark();
-    ImGui_ImplGlfw_InitForOpenGL(window, true);
-    ImGui_ImplOpenGL3_Init("#version 330 core");
-
-    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
-        std::cerr << "Failed to load glad\n";
-        glfwTerminate();
-        return -1;
-    }
-
-    opengl_debug_setup();
-
-    glEnable(GL_DEPTH_TEST);
-    glEnable(GL_CULL_FACE);
+    imgui_init(window);
 
     Mesh sphere_mesh = gen_sphere_mesh(20, 20);
     Shader sphere_shader(DATAPATH("shaders/sphere.vert"),
@@ -159,54 +120,15 @@ int main() {
         skysphere_mesh.draw();
         glDepthFunc(GL_LESS);
 
-        ImGui_ImplOpenGL3_NewFrame();
-        ImGui_ImplGlfw_NewFrame();
-        ImGui::NewFrame();
-        {
-            ImGui::Begin("Simulation control window");
-            ImGui::SeparatorText("Stats");
-            glm::vec3 cam_pos = camera.position();
-            ImGui::Text("Camera position: %.2f %.2f %.2f", cam_pos[0],
-                        cam_pos[1], cam_pos[2]);
-            ImGui::SeparatorText("Add new planet");
-            static float pos[3] = {0};
-            ImGui::InputScalarN("position", ImGuiDataType_Float, &pos, 3);
-            static float v_ini[3] = {0};
-            ImGui::InputScalarN("initial velocity", ImGuiDataType_Float, &v_ini,
-                                3);
-            static float radius = 1.0f;
-            ImGui::InputScalar("radius", ImGuiDataType_Float, &radius);
-            static float density = 1.0f;
-            ImGui::InputScalar("density", ImGuiDataType_Float, &density);
-            ImGui::Text("Mass: %f",
-                        density * static_cast<float>(M_PI) * radius * radius);
-
-            if (ImGui::Button("Add planet")) {
-                planets.push_back(
-                    {{pos[0], pos[1], pos[2]},
-                     {v_ini[0], v_ini[1], v_ini[2]},
-                     {0.0f, 0.0f, 0.0f},
-                     density * static_cast<float>(M_PI) * radius * radius,
-                     0.8f,
-                     radius});
-            }
-            ImGui::Separator();
-            ImGui::Checkbox("Show velocity vectors", &show_vel_vectors);
-            ImGui::End();
-        }
-        ImGui::Render();
-        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+        imgui_draw(camera, planets, show_vel_vectors);
 
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
 
-    ImGui_ImplOpenGL3_Shutdown();
-    ImGui_ImplGlfw_Shutdown();
-    ImGui::DestroyContext();
+    imgui_end();
 
-    glfwDestroyWindow(window);
-    glfwTerminate();
+    window_end(window);
 
     return 0;
 }

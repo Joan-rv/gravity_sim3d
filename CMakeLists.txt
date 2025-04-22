@@ -15,7 +15,9 @@ set(sources
     src/controller.cpp
     src/simulation.cpp
     src/texture.cpp
-    src/arrow.cpp)
+    src/arrow.cpp
+    src/window.cpp
+    src/ui.cpp)
 add_executable(gravity_sim3d ${sources})
 
 fetchcontent_declare(
