@@ -92,10 +92,14 @@ int main() {
                                     0.8f,
                                     1.0f}};
 
+    bool show_vel_vectors = false;
+
     double last_time = glfwGetTime();
     double accumulator = 0.0;
     const double fixed_dt = 0.01;
+
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+
     while (!glfwWindowShouldClose(window)) {
         double curr_time = glfwGetTime();
         double dt = curr_time - last_time;
@@ -133,7 +137,7 @@ int main() {
             sphere_mesh.draw();
         }
 
-        if (controller.paused()) {
+        if (show_vel_vectors) {
             arrow_shader.use();
             arrow_shader.set_mat4("projection", projection);
             arrow_shader.set_mat4("view", camera.view());
@@ -160,7 +164,7 @@ int main() {
         ImGui::NewFrame();
         {
             ImGui::Begin("Simulation control window");
-            ImGui::Text("Add new planet");
+            ImGui::SeparatorText("Add new planet");
             static float pos[3] = {0};
             ImGui::InputScalarN("position", ImGuiDataType_Float, &pos, 3);
             static float v_ini[3] = {0};
@@ -182,6 +186,8 @@ int main() {
                      0.8f,
                      radius});
             }
+            ImGui::Separator();
+            ImGui::Checkbox("Show velocity vectors", &show_vel_vectors);
             ImGui::End();
         }
         ImGui::Render();
