@@ -102,12 +102,14 @@ void Arrow::draw(glm::vec3 origin, glm::vec3 end, Shader &shader) const {
     float angle = acos(glm::dot(unitx, dir));
 
     glm::mat4 stem_model = glm::mat4(1.0f);
+    stem_model = glm::translate(stem_model, origin + length * dir);
     stem_model = glm::rotate(stem_model, angle, axis);
     stem_model = glm::scale(stem_model, glm::vec3(length, 1.0f, 1.0f));
     shader.set_mat4("model", stem_model);
     stem_.draw();
 
     glm::mat4 tip_model = glm::mat4(1.0f);
+    tip_model = glm::translate(tip_model, origin + length * dir);
     tip_model = glm::rotate(tip_model, angle, axis);
     tip_model = glm::translate(tip_model, glm::vec3(length, 0.0f, 0.0f));
     shader.set_mat4("model", tip_model);
