@@ -99,6 +99,9 @@ void Arrow::draw(glm::vec3 origin, glm::vec3 end, Shader &shader) const {
     dir = glm::normalize(dir);
     glm::vec3 unitx(1.0f, 0.0f, 0.0f);
     glm::vec3 axis = glm::cross(unitx, dir);
+    if (glm::dot(axis, axis) < 1e-9f) {
+        axis = glm::vec3(0.0f, 1.0f, 0.0f);
+    }
     float angle = acos(glm::dot(unitx, dir));
 
     glm::mat4 stem_model = glm::mat4(1.0f);
