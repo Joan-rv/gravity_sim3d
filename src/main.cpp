@@ -164,6 +164,10 @@ int main() {
         ImGui::NewFrame();
         {
             ImGui::Begin("Simulation control window");
+            ImGui::SeparatorText("Stats");
+            glm::vec3 cam_pos = camera.position();
+            ImGui::Text("Camera position: %.2f %.2f %.2f", cam_pos[0],
+                        cam_pos[1], cam_pos[2]);
             ImGui::SeparatorText("Add new planet");
             static float pos[3] = {0};
             ImGui::InputScalarN("position", ImGuiDataType_Float, &pos, 3);
