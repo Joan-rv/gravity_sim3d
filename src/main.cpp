@@ -68,11 +68,12 @@ int main() {
 
         controller.handle_frame(dt);
 
-        if (!controller.paused())
+        if (!controller.paused()) {
             accumulator += dt;
-        while (!controller.paused() && accumulator >= fixed_dt) {
-            sim_update(fixed_dt, planets);
-            accumulator -= fixed_dt;
+            while (accumulator >= fixed_dt) {
+                sim_update(fixed_dt, planets);
+                accumulator -= fixed_dt;
+            }
         }
 
         glm::mat4 projection =
