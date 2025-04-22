@@ -10,8 +10,8 @@ public:
     Controller(GLFWwindow *window, Camera &camera);
     Controller(const Controller &) = delete;
     Controller &operator=(const Controller &) = delete;
-    float aspect_ratio();
-    bool paused();
+    float aspect_ratio() const;
+    bool paused() const;
 
 private:
     Camera &camera_;

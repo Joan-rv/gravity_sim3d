@@ -19,9 +19,9 @@ Controller::Controller(GLFWwindow *window, Camera &camera)
     glfwSetWindowUserPointer(window, this);
 }
 
-float Controller::aspect_ratio() { return aspect_ratio_; }
+float Controller::aspect_ratio() const { return aspect_ratio_; }
 
-bool Controller::paused() { return paused_; }
+bool Controller::paused() const { return paused_; }
 
 void Controller::framebuffer_size_callback_(int width, int height) {
     glViewport(0, 0, width, height);
