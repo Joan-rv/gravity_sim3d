@@ -138,8 +138,11 @@ int main() {
             arrow_shader.set_mat4("projection", projection);
             arrow_shader.set_mat4("view", camera.view());
             for (const Planet &planet : planets) {
-                arrow.draw(planet.position, planet.position + planet.velocity,
-                           arrow_shader);
+                glm::vec3 origin =
+                    planet.position +
+                    planet.radius * glm::normalize(planet.velocity);
+                glm::vec3 end = origin + planet.velocity;
+                arrow.draw(origin, end, arrow_shader);
             }
         }
 
