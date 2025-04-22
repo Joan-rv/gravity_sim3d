@@ -6,7 +6,7 @@
 #include "util.hpp"
 
 Controller::Controller(GLFWwindow *window, Camera &camera)
-    : camera_(camera), paused_(false) {
+    : window_(window), camera_(camera), paused_(false) {
     int width, height;
     glfwGetFramebufferSize(window, &width, &height);
     glViewport(0, 0, width, height);
@@ -22,6 +22,22 @@ Controller::Controller(GLFWwindow *window, Camera &camera)
 float Controller::aspect_ratio() const { return aspect_ratio_; }
 
 bool Controller::paused() const { return paused_; }
+
+void Controller::handle_frame(double dt) {
+    const float movement_speed = 2.0f;
+    if (glfwGetKey(window_, GLFW_KEY_W) == GLFW_PRESS) {
+        camera_.move_forward(movement_speed * dt);
+    }
+    if (glfwGetKey(window_, GLFW_KEY_S) == GLFW_PRESS) {
+        camera_.move_backward(movement_speed * dt);
+    }
+    if (glfwGetKey(window_, GLFW_KEY_A) == GLFW_PRESS) {
+        camera_.move_left(movement_speed * dt);
+    }
+    if (glfwGetKey(window_, GLFW_KEY_D) == GLFW_PRESS) {
+        camera_.move_right(movement_speed * dt);
+    }
+}
 
 void Controller::framebuffer_size_callback_(int width, int height) {
     glViewport(0, 0, width, height);
