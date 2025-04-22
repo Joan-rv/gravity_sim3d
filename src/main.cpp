@@ -83,17 +83,14 @@ int main() {
     Shader arrow_shader(DATAPATH("shaders/arrow.vert"),
                         DATAPATH("shaders/arrow.frag"));
     arrow_shader.use();
-    arrow_shader.set_vec4("color", glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
+    arrow_shader.set_vec4("color", glm::vec4(0.0f, 0.0f, 1.0f, 1.0f));
 
-    /*
     std::vector<Planet> planets = {{{0.0f, 0.0f, 0.0f},
                                     {0.0f, 0.0f, 0.0f},
                                     {0.0f, 0.0f, 0.0f},
                                     static_cast<float>(M_PI),
                                     0.8f,
                                     1.0f}};
-    */
-    std::vector<Planet> planets;
 
     double last_time = glfwGetTime();
     double accumulator = 0.0;
@@ -136,10 +133,15 @@ int main() {
             sphere_mesh.draw();
         }
 
-        arrow_shader.use();
-        arrow_shader.set_mat4("projection", projection);
-        arrow_shader.set_mat4("view", camera.view());
-        arrow.draw(glm::vec3(0.0f), glm::vec3(1.0f, 0.0f, 1.0f), arrow_shader);
+        if (controller.paused()) {
+            arrow_shader.use();
+            arrow_shader.set_mat4("projection", projection);
+            arrow_shader.set_mat4("view", camera.view());
+            for (const Planet &planet : planets) {
+                arrow.draw(planet.position, planet.position + planet.velocity,
+                           arrow_shader);
+            }
+        }
 
         glDepthFunc(GL_LEQUAL);
         skysphere_shader.use();
