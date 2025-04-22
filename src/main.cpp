@@ -102,7 +102,6 @@ int main() {
     while (!glfwWindowShouldClose(window)) {
         double curr_time = glfwGetTime();
         double dt = curr_time - last_time;
-        accumulator += dt;
         last_time = curr_time;
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
@@ -118,6 +117,8 @@ int main() {
             camera.move_right(movement_speed * dt);
         }
 
+        if (!controller.paused())
+            accumulator += dt;
         while (!controller.paused() && accumulator >= fixed_dt) {
             sim_update(fixed_dt, planets);
             accumulator -= fixed_dt;
