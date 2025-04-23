@@ -39,7 +39,7 @@ int main() {
                             DATAPATH("shaders/skysphere.frag"));
     Texture skysphere_texture(DATAPATH("textures/subdued_blue_nebulae_1.png"));
 
-    Arrow arrow(0.8f, 0.3f, 20);
+    Arrow arrow(0.5f, 0.3f, 0.1f, 20);
     Shader arrow_shader(DATAPATH("shaders/arrow.vert"),
                         DATAPATH("shaders/arrow.frag"));
     arrow_shader.use();

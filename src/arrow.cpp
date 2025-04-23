@@ -53,7 +53,7 @@ static Mesh gen_stem(float width, size_t resolution) {
                 indices);
 }
 
-static Mesh gen_tip(float width, size_t resolution) {
+static Mesh gen_tip(float tip_length, float width, size_t resolution) {
     std::vector<glm::vec3> vertices;
     vertices.reserve(2 + resolution + 1);
     vertices.push_back({0.0f, 0.0f, 0.0f});
@@ -61,7 +61,7 @@ static Mesh gen_tip(float width, size_t resolution) {
         float angle = 2.0f * M_PI * i / resolution;
         vertices.push_back({0.0f, width * sin(angle), width * cos(angle)});
     }
-    vertices.push_back({1.0f, 0.0f, 0.0f});
+    vertices.push_back({tip_length, 0.0f, 0.0f});
     assert(2 + resolution + 1 == vertices.size());
 
     std::vector<unsigned int> indices;
@@ -87,16 +87,18 @@ static Mesh gen_tip(float width, size_t resolution) {
                 indices);
 }
 
-Arrow::Arrow(float tip_width, float stem_width, size_t resolution)
+Arrow::Arrow(float tip_length, float tip_width, float stem_width,
+             size_t resolution)
     : stem_(gen_stem(stem_width, resolution)),
-      tip_(gen_tip(tip_width, resolution)) {}
+      tip_(gen_tip(tip_length, tip_width, resolution)),
+      tip_length_(tip_length) {}
 
 void Arrow::draw(glm::vec3 origin, glm::vec3 end, Shader &shader) const {
     assert(shader.is_used());
 
     glm::vec3 dir = end - origin;
     float length = glm::length(dir);
-    length = fmaxf(length - 1.0f, 0.0f);
+    length = fmaxf(length - tip_length_, 0.0f);
     dir = glm::normalize(dir);
     glm::vec3 unitx(1.0f, 0.0f, 0.0f);
     glm::vec3 axis = glm::cross(unitx, dir);
