@@ -37,17 +37,19 @@ void imgui_draw(const Camera &camera, std::vector<Planet> &planets,
         ImGui::InputScalar("radius", ImGuiDataType_Float, &radius);
         static float density = 1.0f;
         ImGui::InputScalar("density", ImGuiDataType_Float, &density);
-        ImGui::Text("Mass: %f",
-                    density * static_cast<float>(M_PI) * radius * radius);
+        ImGui::Text("Mass: %f", density * (4.0f / 3.0f) *
+                                    static_cast<float>(M_PI) * radius * radius *
+                                    radius);
 
         if (ImGui::Button("Add planet")) {
-            planets.push_back(
-                {{pos[0], pos[1], pos[2]},
-                 {v_ini[0], v_ini[1], v_ini[2]},
-                 {0.0f, 0.0f, 0.0f},
-                 density * static_cast<float>(M_PI) * radius * radius,
-                 0.8f,
-                 radius});
+            planets.push_back({{pos[0], pos[1], pos[2]},
+                               {v_ini[0], v_ini[1], v_ini[2]},
+                               {0.0f, 0.0f, 0.0f},
+                               density * (4.0f / 3.0f) *
+                                   static_cast<float>(M_PI) * radius * radius *
+                                   radius,
+                               0.8f,
+                               radius});
         }
         ImGui::Separator();
         ImGui::Checkbox("Show velocity vectors", &show_vel_vectors);

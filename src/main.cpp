@@ -48,7 +48,7 @@ int main() {
     std::vector<Planet> planets = {{{0.0f, 0.0f, 0.0f},
                                     {0.0f, 0.0f, 0.0f},
                                     {0.0f, 0.0f, 0.0f},
-                                    static_cast<float>(M_PI),
+                                    (4.0f / 3.0f) * static_cast<float>(M_PI),
                                     0.8f,
                                     1.0f}};
 
