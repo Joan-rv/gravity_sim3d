@@ -24,9 +24,9 @@ void glfw_error_callback(int error, const char *description) {
     exit(EXIT_FAILURE);
 }
 
-void APIENTRY gl_debug_output(GLenum source, GLenum type, unsigned int id,
-                              GLenum severity, GLsizei length,
-                              const char *message, const void *userParam) {
+void GLAPIENTRY gl_debug_output(GLenum source, GLenum type, unsigned int id,
+                                GLenum severity, GLsizei length,
+                                const char *message, const void *userParam) {
     UNUSED(length);
     UNUSED(userParam);
     // ignore non-significant error/warning codes

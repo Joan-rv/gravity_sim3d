@@ -1,5 +1,5 @@
 #include <cassert>
-#include <glad/glad.h>
+#include <glad/gl.h>
 #include <iostream>
 #include <stb_image.h>
 

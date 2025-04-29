@@ -34,7 +34,7 @@ fetchcontent_makeavailable(glfw3 glm)
 
 find_package(OpenGL REQUIRED)
 
-add_library(glad external/glad/src/glad.c)
+add_library(glad external/glad/src/gl.c)
 target_include_directories(glad PUBLIC external/glad/include)
 
 add_library(stb external/stb/stb_image.c)

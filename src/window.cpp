@@ -2,7 +2,7 @@
 
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
-#include <glad/glad.h>
+#include <glad/gl.h>
 
 #include "debug.hpp"
 #include "window.hpp"
@@ -27,7 +27,7 @@ GLFWwindow *window_init(int width, int height) {
     }
     glfwMakeContextCurrent(window);
 
-    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
+    if (!gladLoadGL(glfwGetProcAddress)) {
         std::cerr << "Failed to load glad\n";
         glfwTerminate();
         return NULL;

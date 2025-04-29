@@ -1,7 +1,7 @@
 #ifndef MESH_HPP
 #define MESH_HPP
 
-#include <glad/glad.h>
+#include <glad/gl.h>
 #include <vector>
 
 struct VertexAttribute {
