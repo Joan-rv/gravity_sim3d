@@ -28,6 +28,7 @@ Shader::Shader(const char *vertex_path, const char *fragment_path)
         char info_log[512];
         glGetShaderInfoLog(vert_shader, 512, NULL, info_log);
         std::cerr << "Failed to compile vertex shader\n" << info_log << '\n';
+        throw std::runtime_error("Failed to compile vertex shader");
     }
 
     int frag_size = std::filesystem::file_size(fragment_path);
@@ -44,6 +45,7 @@ Shader::Shader(const char *vertex_path, const char *fragment_path)
         char info_log[512];
         glGetShaderInfoLog(frag_shader, 512, NULL, info_log);
         std::cerr << "Failed to compile fragex shader\n" << info_log << '\n';
+        throw std::runtime_error("Failed to compile fragment shader");
     }
 
     glAttachShader(id_, vert_shader);
@@ -54,6 +56,7 @@ Shader::Shader(const char *vertex_path, const char *fragment_path)
         char info_log[512];
         glGetProgramInfoLog(id_, 512, NULL, info_log);
         std::cerr << "Failed to link shader\n" << info_log << '\n';
+        throw std::runtime_error("Failed to link shader");
     }
 
     glDeleteShader(vert_shader);
