@@ -1,4 +1,5 @@
 #include <glm/ext/matrix_clip_space.hpp>
+#include <iostream>
 
 #include "arrow.hpp"
 #include "camera.hpp"
@@ -15,13 +16,31 @@
 #include "util.hpp"
 #include "window.hpp"
 
+void run();
+
 int main() {
+    try {
+        run();
+    } catch (const std::exception &e) {
+        std::cerr << e.what() << '\n';
+        return EXIT_FAILURE;
+    } catch (const std::string &e) {
+        std::cerr << e << '\n';
+        return EXIT_FAILURE;
+    } catch (...) {
+        std::cerr << "Critical error. Unknown exception\n";
+        return EXIT_FAILURE;
+    }
+    return EXIT_SUCCESS;
+}
+
+void run() {
     const int width = 600;
     const int height = 600;
 
     GLFWwindow *window = window_init(width, height);
     if (!window) {
-        return -1;
+        throw std::runtime_error("Failed to create window");
     }
 
     Camera camera({0.0f, 0.0f, 5.0f}, 0.0f, -M_PI_2);
@@ -120,6 +139,4 @@ int main() {
     imgui_end();
 
     window_end(window);
-
-    return 0;
 }
