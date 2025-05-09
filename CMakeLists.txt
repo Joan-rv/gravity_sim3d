@@ -19,6 +19,7 @@ set(sources
     src/window.cpp
     src/ui.cpp)
 add_executable(gravity_sim3d ${sources})
+target_compile_features(gravity_sim3d PRIVATE cxx_std_17)
 
 fetchcontent_declare(
   glfw3
