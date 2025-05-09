@@ -3,6 +3,7 @@
 #include <imgui.h>
 
 #include "camera.hpp"
+#include "pi.hpp"
 #include "planet.hpp"
 #include "ui.hpp"
 

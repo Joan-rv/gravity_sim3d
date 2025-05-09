@@ -4,6 +4,7 @@
 #include "camera.hpp"
 #include "controller.hpp"
 #include "mesh.hpp"
+#include "pi.hpp"
 #include "planet.hpp"
 #include "shader.hpp"
 #include "simulation.hpp"

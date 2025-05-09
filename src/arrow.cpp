@@ -3,6 +3,7 @@
 
 #include "arrow.hpp"
 #include "mesh.hpp"
+#include "pi.hpp"
 #include "shader.hpp"
 
 static Mesh gen_stem(float width, size_t resolution) {

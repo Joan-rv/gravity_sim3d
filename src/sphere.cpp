@@ -1,6 +1,7 @@
 #include <vector>
 
 #include "mesh.hpp"
+#include "pi.hpp"
 #include "sphere.hpp"
 
 struct SphereVertex {

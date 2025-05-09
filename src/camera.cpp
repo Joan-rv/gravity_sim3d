@@ -2,6 +2,7 @@
 #include <glm/ext/matrix_transform.hpp>
 
 #include "camera.hpp"
+#include "pi.hpp"
 
 Camera::Camera(glm::vec3 position, float pitch, float yaw, glm::vec3 world_up)
     : position_(position), pitch_(pitch), yaw_(yaw), world_up_(world_up) {
