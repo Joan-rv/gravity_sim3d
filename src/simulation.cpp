@@ -9,9 +9,12 @@ void sim_update(float dt, std::vector<Planet> &planets) {
         for (size_t j = i + 1; j < planets.size(); j++) {
             Planet &p2 = planets[j];
             glm::vec3 vec = p2.position - p1.position;
+            float dist_sq = glm::dot(vec, vec);
+            if (dist_sq < 1e-8)
+                continue;
 
-            glm::vec3 force = G * p1.mass * p2.mass / glm::dot(vec, vec) *
-                              glm::normalize(vec);
+            glm::vec3 force =
+                G * p1.mass * p2.mass / dist_sq * glm::normalize(vec);
             p1.forces += force;
             p2.forces -= force;
         }
