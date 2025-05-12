@@ -42,8 +42,8 @@ void run() {
     Camera camera({0.0f, 0.0f, 5.0f}, 0.0f, -PI_2);
 
     // must be constructed before ImGui to properly register callbacks
-    Controller controller(window.ptr(), camera);
-    Ui ui(window.ptr());
+    Controller controller(window, camera);
+    Ui ui(window);
 
     Mesh sphere_mesh = gen_sphere_mesh(20, 20);
     Shader sphere_shader(DATAPATH("shaders/sphere.vert"),
@@ -74,7 +74,7 @@ void run() {
 
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
-    while (!glfwWindowShouldClose(window.ptr())) {
+    while (!window.should_close()) {
         double curr_time = glfwGetTime();
         double dt = curr_time - last_time;
         last_time = curr_time;
@@ -127,7 +127,7 @@ void run() {
             planets.push_back(ui.new_planet());
         }
 
-        glfwSwapBuffers(window.ptr());
+        window.swap_buffers();
         glfwPollEvents();
     }
 }

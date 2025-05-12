@@ -4,19 +4,20 @@
 #include "camera.hpp"
 #include "controller.hpp"
 #include "util.hpp"
+#include "window.hpp"
 
-Controller::Controller(GLFWwindow *window, Camera &camera)
-    : window_(window), camera_(camera), paused_(false) {
+Controller::Controller(Window &window, Camera &camera)
+    : window_(window.ptr()), camera_(camera), paused_(false) {
     int width, height;
-    glfwGetFramebufferSize(window, &width, &height);
+    glfwGetFramebufferSize(window_, &width, &height);
     glViewport(0, 0, width, height);
     aspect_ratio_ = static_cast<float>(width) / height;
-    glfwSetCursorPosCallback(window, glfw_cursor_pos_callback_);
-    glfwSetKeyCallback(window, glfw_key_callback_);
-    glfwSetMouseButtonCallback(window, glfw_mouse_button_callback_);
-    glfwSetFramebufferSizeCallback(window, glfw_framebuffer_size_callback_);
-    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-    glfwSetWindowUserPointer(window, this);
+    glfwSetCursorPosCallback(window_, glfw_cursor_pos_callback_);
+    glfwSetKeyCallback(window_, glfw_key_callback_);
+    glfwSetMouseButtonCallback(window_, glfw_mouse_button_callback_);
+    glfwSetFramebufferSizeCallback(window_, glfw_framebuffer_size_callback_);
+    glfwSetInputMode(window_, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    glfwSetWindowUserPointer(window_, this);
 }
 
 float Controller::aspect_ratio() const { return aspect_ratio_; }

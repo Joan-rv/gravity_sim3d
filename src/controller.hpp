@@ -4,10 +4,11 @@
 #include <GLFW/glfw3.h>
 
 class Camera;
+class Window;
 
 class Controller {
 public:
-    Controller(GLFWwindow *window, Camera &camera);
+    Controller(Window &window, Camera &camera);
     Controller(const Controller &) = delete;
     Controller &operator=(const Controller &) = delete;
     float aspect_ratio() const;

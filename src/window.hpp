@@ -10,6 +10,9 @@ public:
     Window &operator=(const Window &) = delete;
     ~Window();
 
+    bool should_close() const;
+    void swap_buffers();
+
     GLFWwindow *ptr();
 
 private:

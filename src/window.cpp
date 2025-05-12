@@ -40,4 +40,7 @@ Window::~Window() {
     glfwTerminate();
 }
 
+bool Window::should_close() const { return glfwWindowShouldClose(window_); }
+void Window::swap_buffers() { glfwSwapBuffers(window_); }
+
 GLFWwindow *Window::ptr() { return window_; }

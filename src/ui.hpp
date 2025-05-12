@@ -6,10 +6,11 @@
 #include "planet.hpp"
 
 class Camera;
+class Window;
 
 class Ui {
 public:
-    Ui(GLFWwindow *window);
+    Ui(Window &window);
     Ui(const Ui &) = delete;
     Ui &operator=(const Ui &) = delete;
     ~Ui();
