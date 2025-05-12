@@ -43,7 +43,7 @@ void run() {
         throw std::runtime_error("Failed to create window");
     }
 
-    Camera camera({0.0f, 0.0f, 5.0f}, 0.0f, -M_PI_2);
+    Camera camera({0.0f, 0.0f, 5.0f}, 0.0f, -PI_2);
 
     // must be constructed before ImGui to properly register callbacks
     Controller controller(window, camera);
@@ -68,7 +68,7 @@ void run() {
     std::vector<Planet> planets = {{{0.0f, 0.0f, 0.0f},
                                     {0.0f, 0.0f, 0.0f},
                                     {0.0f, 0.0f, 0.0f},
-                                    (4.0f / 3.0f) * static_cast<float>(M_PI),
+                                    (4.0f / 3.0f) * PI,
                                     0.8f,
                                     1.0f}};
 
@@ -97,8 +97,7 @@ void run() {
         }
 
         glm::mat4 projection =
-            glm::perspective(static_cast<float>(M_PI_4),
-                             controller.aspect_ratio(), 0.1f, 100.0f);
+            glm::perspective(PI_4, controller.aspect_ratio(), 0.1f, 100.0f);
 
         sphere_shader.use();
         sphere_shader.set_mat4("projection", projection);

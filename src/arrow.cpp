@@ -11,12 +11,12 @@ static Mesh gen_stem(float width, size_t resolution) {
     vertices.reserve(2 + 2 * (resolution + 1));
     vertices.push_back({-1.0f, 0.0f, 0.0f});
     for (size_t i = 0; i <= resolution; i++) {
-        float angle = 2.0f * M_PI * i / resolution;
+        float angle = 2.0f * PI * i / resolution;
         vertices.push_back({-1.0f, width * sin(angle), width * cos(angle)});
     }
     vertices.push_back({1.0f, 0.0f, 0.0f});
     for (size_t i = 0; i <= resolution; i++) {
-        float angle = 2.0f * M_PI * i / resolution;
+        float angle = 2.0f * PI * i / resolution;
         vertices.push_back({1.0f, width * sin(angle), width * cos(angle)});
     }
     assert(2 + 2 * (resolution + 1) == vertices.size());
@@ -59,7 +59,7 @@ static Mesh gen_tip(float tip_length, float width, size_t resolution) {
     vertices.reserve(2 + resolution + 1);
     vertices.push_back({0.0f, 0.0f, 0.0f});
     for (size_t i = 0; i <= resolution; i++) {
-        float angle = 2.0f * M_PI * i / resolution;
+        float angle = 2.0f * PI * i / resolution;
         vertices.push_back({0.0f, width * sin(angle), width * cos(angle)});
     }
     vertices.push_back({tip_length, 0.0f, 0.0f});

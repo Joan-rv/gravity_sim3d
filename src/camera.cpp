@@ -21,8 +21,7 @@ void Camera::position(glm::vec3 pos) {
     update_vectors_();
 }
 void Camera::pitch(float pitch) {
-    pitch_ = std::clamp(pitch, static_cast<float>(-M_PI_2) + 0.01f,
-                        static_cast<float>(M_PI_2) - 0.01f);
+    pitch_ = std::clamp(pitch, -PI_2 + 0.01f, PI_2 - 0.01f);
     update_vectors_();
 }
 void Camera::yaw(float yaw) {
