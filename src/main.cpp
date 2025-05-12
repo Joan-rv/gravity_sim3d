@@ -12,6 +12,7 @@
 #include "skysphere.hpp"
 #include "sphere.hpp"
 #include "texture.hpp"
+#include "timer.hpp"
 #include "ui.hpp"
 #include "util.hpp"
 #include "window.hpp"
@@ -65,16 +66,14 @@ void run() {
                                     0.8f,
                                     1.0f}};
 
-    double last_time = glfwGetTime();
+    Timer timer;
     double accumulator = 0.0;
     const double fixed_dt = 0.01;
 
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
     while (!window.should_close()) {
-        double curr_time = glfwGetTime();
-        double dt = curr_time - last_time;
-        last_time = curr_time;
+        double dt = timer.tick();
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         controller.handle_frame(dt);
