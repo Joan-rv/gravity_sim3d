@@ -1,4 +1,4 @@
-#include <iostream>
+#include <stdexcept>
 
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
@@ -7,41 +7,37 @@
 #include "debug.hpp"
 #include "window.hpp"
 
-GLFWwindow *window_init(int width, int height) {
+Window::Window(int width, int height) {
     glfwSetErrorCallback(glfw_error_callback);
     if (!glfwInit()) {
-        std::cerr << "Failed to initialize glfw\n";
-        return NULL;
+        throw std::runtime_error("Failed to initialize glfw");
     }
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, true);
 
-    GLFWwindow *window =
-        glfwCreateWindow(width, height, "gravity_sim3d", NULL, NULL);
-    if (window == NULL) {
-        std::cerr << "Failed to create glfw window\n";
+    window_ = glfwCreateWindow(width, height, "gravity_sim3d", NULL, NULL);
+    if (window_ == NULL) {
         glfwTerminate();
-        return NULL;
+        throw std::runtime_error("Failed to create glfw window");
     }
-    glfwMakeContextCurrent(window);
+    glfwMakeContextCurrent(window_);
 
     if (!gladLoadGL(glfwGetProcAddress)) {
-        std::cerr << "Failed to load glad\n";
         glfwTerminate();
-        return NULL;
+        throw std::runtime_error("Failed to load glad");
     }
 
     opengl_debug_setup();
 
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
-
-    return window;
 }
 
-void window_end(GLFWwindow *window) {
-    glfwDestroyWindow(window);
+Window::~Window() {
+    glfwDestroyWindow(window_);
     glfwTerminate();
 }
+
+GLFWwindow *Window::ptr() { return window_; }

@@ -3,9 +3,17 @@
 
 #include <GLFW/glfw3.h>
 
-// Returns NULL on error
-GLFWwindow *window_init(int width, int height);
+class Window {
+public:
+    Window(int width, int height);
+    Window(const Window &) = delete;
+    Window &operator=(const Window &) = delete;
+    ~Window();
 
-void window_end(GLFWwindow *window);
+    GLFWwindow *ptr();
+
+private:
+    GLFWwindow *window_;
+};
 
 #endif
