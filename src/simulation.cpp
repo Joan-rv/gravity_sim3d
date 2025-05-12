@@ -41,7 +41,10 @@ void sim_update(float dt, std::vector<Planet> &planets) {
                 if (dist < 0.0f) {
                     done = false;
                     glm::vec3 normal = p2.position - p1.position;
-                    normal = glm::normalize(normal);
+                    if (glm::dot(normal, normal) < 1e-8)
+                        normal = glm::vec3(1.0f, 0.0f, 0.0f);
+                    else
+                        normal = glm::normalize(normal);
                     glm::vec3 correction = 0.2f * -dist * normal;
                     p1.position -= correction;
                     p2.position += correction;
