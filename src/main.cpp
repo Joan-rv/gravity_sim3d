@@ -17,6 +17,7 @@
 #include "window.hpp"
 
 void run();
+void run_window(GLFWwindow *window);
 
 int main() {
     try {
@@ -43,11 +44,19 @@ void run() {
         throw std::runtime_error("Failed to create window");
     }
 
+    // Some destructors require the window to not deleted
+    // Scope them in a separate function
+    run_window(window);
+
+    window_end(window);
+}
+
+void run_window(GLFWwindow *window) {
     Camera camera({0.0f, 0.0f, 5.0f}, 0.0f, -PI_2);
 
     // must be constructed before ImGui to properly register callbacks
     Controller controller(window, camera);
-    imgui_init(window);
+    Ui ui(window);
 
     Mesh sphere_mesh = gen_sphere_mesh(20, 20);
     Shader sphere_shader(DATAPATH("shaders/sphere.vert"),
@@ -71,8 +80,6 @@ void run() {
                                     (4.0f / 3.0f) * PI,
                                     0.8f,
                                     1.0f}};
-
-    bool show_vel_vectors = false;
 
     double last_time = glfwGetTime();
     double accumulator = 0.0;
@@ -107,7 +114,7 @@ void run() {
             sphere_mesh.draw();
         }
 
-        if (show_vel_vectors) {
+        if (ui.show_vectors()) {
             arrow_shader.use();
             arrow_shader.set_mat4("projection", projection);
             arrow_shader.set_mat4("view", camera.view());
@@ -129,13 +136,11 @@ void run() {
         skysphere_mesh.draw();
         glDepthFunc(GL_LESS);
 
-        imgui_draw(camera, planets, show_vel_vectors);
+        if (ui.draw(camera)) {
+            planets.push_back(ui.new_planet());
+        }
 
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
-
-    imgui_end();
-
-    window_end(window);
 }

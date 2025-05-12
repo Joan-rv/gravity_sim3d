@@ -7,7 +7,7 @@
 #include "planet.hpp"
 #include "ui.hpp"
 
-void imgui_init(GLFWwindow *window) {
+Ui::Ui(GLFWwindow *window) {
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImGuiIO &io = ImGui::GetIO();
@@ -18,8 +18,9 @@ void imgui_init(GLFWwindow *window) {
     ImGui_ImplOpenGL3_Init("#version 330 core");
 }
 
-void imgui_draw(const Camera &camera, std::vector<Planet> &planets,
-                bool &show_vel_vectors) {
+bool Ui::draw(const Camera &camera) {
+    bool ret;
+
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
@@ -30,35 +31,33 @@ void imgui_draw(const Camera &camera, std::vector<Planet> &planets,
         ImGui::Text("Camera position: %.2f %.2f %.2f", cam_pos[0], cam_pos[1],
                     cam_pos[2]);
         ImGui::SeparatorText("Add new planet");
-        static float pos[3] = {0};
-        ImGui::InputScalarN("position", ImGuiDataType_Float, &pos, 3);
-        static float v_ini[3] = {0};
-        ImGui::InputScalarN("initial velocity", ImGuiDataType_Float, &v_ini, 3);
-        static float radius = 1.0f;
-        ImGui::InputScalar("radius", ImGuiDataType_Float, &radius);
+        ImGui::InputScalarN("position", ImGuiDataType_Float,
+                            &new_planet_.position, 3);
+        ImGui::InputScalarN("initial velocity", ImGuiDataType_Float,
+                            &new_planet_.velocity, 3);
+        ImGui::InputScalar("radius", ImGuiDataType_Float, &new_planet_.radius);
         static float density = 1.0f;
         ImGui::InputScalar("density", ImGuiDataType_Float, &density);
-        ImGui::Text("Mass: %f",
-                    density * (4.0f / 3.0f) * PI * radius * radius * radius);
+        float radius_cube =
+            new_planet_.radius * new_planet_.radius * new_planet_.radius;
+        new_planet_.mass = density * (4.0f / 3.0f) * PI * radius_cube;
+        ImGui::Text("Mass: %f", new_planet_.mass);
 
-        if (ImGui::Button("Add planet")) {
-            planets.push_back(
-                {{pos[0], pos[1], pos[2]},
-                 {v_ini[0], v_ini[1], v_ini[2]},
-                 {0.0f, 0.0f, 0.0f},
-                 density * (4.0f / 3.0f) * PI * radius * radius * radius,
-                 0.8f,
-                 radius});
-        }
+        ret = ImGui::Button("Add planet");
         ImGui::Separator();
-        ImGui::Checkbox("Show velocity vectors", &show_vel_vectors);
+        ImGui::Checkbox("Show velocity vectors", &show_vectors_);
         ImGui::End();
     }
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+    return ret;
 }
 
-void imgui_end() {
+Planet &Ui::new_planet() { return new_planet_; }
+bool Ui::show_vectors() const { return show_vectors_; }
+
+Ui::~Ui() {
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();

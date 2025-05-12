@@ -1,16 +1,27 @@
 #ifndef UI_HPP
 #define UI_HPP
 
-#include <vector>
-
 #include <GLFW/glfw3.h>
 
-class Camera;
-struct Planet;
+#include "planet.hpp"
 
-void imgui_init(GLFWwindow *window);
-void imgui_draw(const Camera &camera, std::vector<Planet> &planets,
-                bool &show_vel_vectors);
-void imgui_end();
+class Camera;
+
+class Ui {
+public:
+    Ui(GLFWwindow *window);
+    Ui(const Ui &) = delete;
+    Ui &operator=(const Ui &) = delete;
+    ~Ui();
+
+    bool draw(const Camera &camera);
+    Planet &new_planet();
+    bool show_vectors() const;
+
+private:
+    Planet new_planet_ = {
+        glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(0.0f), 0.0f, 0.8f, 1.0f};
+    bool show_vectors_;
+};
 
 #endif
