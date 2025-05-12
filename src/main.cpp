@@ -24,9 +24,6 @@ int main() {
     } catch (const std::exception &e) {
         std::cerr << e.what() << '\n';
         return EXIT_FAILURE;
-    } catch (const std::string &e) {
-        std::cerr << e << '\n';
-        return EXIT_FAILURE;
     } catch (...) {
         std::cerr << "Critical error. Unknown exception\n";
         return EXIT_FAILURE;
