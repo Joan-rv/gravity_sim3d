@@ -92,6 +92,7 @@ void run() {
         sphere_shader.use();
         sphere_shader.set_mat4("projection", projection);
         sphere_shader.set_mat4("view", camera.view());
+        sphere_shader.set_vec4("color", glm::vec4(1.0f));
         for (const Planet &planet : planets) {
             sphere_shader.set_mat4("model", planet.model());
             sphere_mesh.draw();
@@ -120,6 +121,18 @@ void run() {
         glDepthFunc(GL_LESS);
 
         if (controller.paused()) {
+            sphere_shader.use();
+            sphere_shader.set_vec4("color", glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
+            sphere_shader.set_mat4("model", ui.new_planet().model());
+            sphere_mesh.draw();
+            if (ui.show_vectors()) {
+                glm::vec3 origin = ui.new_planet().position +
+                                   ui.new_planet().radius *
+                                       glm::normalize(ui.new_planet().velocity);
+                glm::vec3 end = origin + ui.new_planet().velocity;
+                arrow_shader.use();
+                arrow.draw(origin, end, arrow_shader);
+            }
             ui.draw(camera);
             if (ui.create_new_planet()) {
                 planets.push_back(ui.new_planet());
