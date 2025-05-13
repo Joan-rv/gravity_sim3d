@@ -39,7 +39,6 @@ void run() {
     Window window(width, height);
     Camera camera({0.0f, 0.0f, 5.0f}, 0.0f, -PI_2);
 
-    // must be constructed before ImGui to properly register callbacks
     Controller controller(window, camera);
     Ui ui(window);
 
@@ -103,11 +102,7 @@ void run() {
             arrow_shader.set_mat4("projection", projection);
             arrow_shader.set_mat4("view", camera.view());
             for (const Planet &planet : planets) {
-                glm::vec3 origin =
-                    planet.position +
-                    planet.radius * glm::normalize(planet.velocity);
-                glm::vec3 end = origin + planet.velocity;
-                arrow.draw(origin, end, arrow_shader);
+                arrow.draw(planet, arrow_shader);
             }
         }
 
@@ -126,12 +121,8 @@ void run() {
             sphere_shader.set_mat4("model", ui.new_planet().model());
             sphere_mesh.draw();
             if (ui.show_vectors()) {
-                glm::vec3 origin = ui.new_planet().position +
-                                   ui.new_planet().radius *
-                                       glm::normalize(ui.new_planet().velocity);
-                glm::vec3 end = origin + ui.new_planet().velocity;
                 arrow_shader.use();
-                arrow.draw(origin, end, arrow_shader);
+                arrow.draw(ui.new_planet(), arrow_shader);
             }
             ui.draw(camera);
             if (ui.create_new_planet()) {

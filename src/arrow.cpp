@@ -4,6 +4,7 @@
 #include "arrow.hpp"
 #include "mesh.hpp"
 #include "pi.hpp"
+#include "planet.hpp"
 #include "shader.hpp"
 
 static Mesh gen_stem(float width, size_t resolution) {
@@ -121,4 +122,11 @@ void Arrow::draw(glm::vec3 origin, glm::vec3 end, Shader &shader) const {
     tip_model = glm::translate(tip_model, glm::vec3(0.5f * length, 0.0f, 0.0f));
     shader.set_mat4("model", tip_model);
     tip_.draw();
+}
+
+void Arrow::draw(const Planet &planet, Shader &shader) const {
+    glm::vec3 origin =
+        planet.position + planet.radius * glm::normalize(planet.velocity);
+    glm::vec3 end = origin + planet.velocity;
+    draw(origin, end, shader);
 }
