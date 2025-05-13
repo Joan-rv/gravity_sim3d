@@ -119,8 +119,11 @@ void run() {
         skysphere_mesh.draw();
         glDepthFunc(GL_LESS);
 
-        if (ui.draw(camera)) {
-            planets.push_back(ui.new_planet());
+        if (controller.paused()) {
+            ui.draw(camera);
+            if (ui.create_new_planet()) {
+                planets.push_back(ui.new_planet());
+            }
         }
 
         window.swap_buffers();

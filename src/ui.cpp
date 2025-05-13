@@ -19,9 +19,7 @@ Ui::Ui(Window &window) {
     ImGui_ImplOpenGL3_Init("#version 330 core");
 }
 
-bool Ui::draw(const Camera &camera) {
-    bool ret;
-
+void Ui::draw(const Camera &camera) {
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
@@ -44,19 +42,18 @@ bool Ui::draw(const Camera &camera) {
         new_planet_.mass = density * (4.0f / 3.0f) * PI * radius_cube;
         ImGui::Text("Mass: %f", new_planet_.mass);
 
-        ret = ImGui::Button("Add planet");
+        create_new_planet_ = ImGui::Button("Add planet");
         ImGui::Separator();
         ImGui::Checkbox("Show velocity vectors", &show_vectors_);
         ImGui::End();
     }
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
-    return ret;
 }
 
 Planet &Ui::new_planet() { return new_planet_; }
 bool Ui::show_vectors() const { return show_vectors_; }
+bool Ui::create_new_planet() const { return create_new_planet_; }
 
 Ui::~Ui() {
     ImGui_ImplOpenGL3_Shutdown();
