@@ -58,9 +58,13 @@ void Controller::key_callback_(GLFWwindow *window, int key, int scancode,
     UNUSED(mods);
     ImGuiIO &io = ImGui::GetIO();
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
-        paused_ = true;
-        io.ConfigFlags &= ~ImGuiConfigFlags_NoMouse;
-        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+        if (paused_) {
+            glfwSetWindowShouldClose(window, true);
+        } else {
+            paused_ = true;
+            io.ConfigFlags &= ~ImGuiConfigFlags_NoMouse;
+            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+        }
     }
     if (io.WantCaptureKeyboard)
         return;
