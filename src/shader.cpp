@@ -10,12 +10,46 @@ unsigned int Shader::current_used_ = 0;
 
 Shader::Shader() : id_(0) {}
 
-static std::string load_shader(std::filesystem::path path) {
+static std::string load_str_from(std::filesystem::path path) {
     size_t file_size = std::filesystem::file_size(path);
     std::string buf(file_size, ' ');
-    std::ifstream stream(path, std::ios::binary);
+    std::ifstream stream(path);
     stream.read(buf.data(), file_size);
     return buf;
+}
+
+static std::string load_shader(std::filesystem::path path) {
+    std::string data(load_str_from(path));
+
+    size_t line = 0;
+    size_t i = 0;
+    do {
+        size_t next = data.find('\n', i);
+        if (next == std::string::npos) {
+            next = data.size();
+        }
+
+        std::string_view prefix("#include ");
+        if (data.compare(i, prefix.size(), prefix) == 0) {
+            size_t end = next - i - prefix.size();
+            std::filesystem::path include_path =
+                path.remove_filename() / (data.substr(i + prefix.size(), end));
+            if (std::filesystem::equivalent(include_path, path))
+                continue;
+            std::string include_str(load_str_from(include_path));
+            data.replace(i, next - i, include_str);
+            data.replace(i + include_str.size(), 0,
+                         "#line " + std::to_string(line) + "\n");
+        }
+
+        i = next;
+        while (i < data.size() && data[i] == '\n') {
+            ++i;
+            line++;
+        }
+    } while (i < data.size() && i != std::string::npos);
+
+    return data;
 }
 
 Shader::Shader(std::filesystem::path vertex_path,
