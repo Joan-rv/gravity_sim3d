@@ -44,7 +44,7 @@ Shader::Shader(const char *vertex_path, const char *fragment_path)
     if (!status) {
         char info_log[512];
         glGetShaderInfoLog(frag_shader, 512, NULL, info_log);
-        std::cerr << "Failed to compile fragex shader\n" << info_log << '\n';
+        std::cerr << "Failed to compile fragment shader\n" << info_log << '\n';
         throw std::runtime_error("Failed to compile fragment shader");
     }
 
