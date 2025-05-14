@@ -13,7 +13,8 @@ class Arrow {
 public:
     Arrow(float tip_length, float tip_width, float stem_width,
           size_t resolution);
-    void draw(glm::vec3 origin, glm::vec3 end, Shader &shader) const;
+    void draw(glm::vec3 origin, glm::vec3 end, float scale,
+              Shader &shader) const;
     void draw(const Planet &planet, Shader &shader) const;
 
 private:

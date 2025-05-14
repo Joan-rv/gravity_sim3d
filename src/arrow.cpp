@@ -95,14 +95,15 @@ Arrow::Arrow(float tip_length, float tip_width, float stem_width,
       tip_(gen_tip(tip_length, tip_width, resolution)),
       tip_length_(tip_length) {}
 
-void Arrow::draw(glm::vec3 origin, glm::vec3 end, Shader &shader) const {
+void Arrow::draw(glm::vec3 origin, glm::vec3 end, float scale,
+                 Shader &shader) const {
     assert(shader.is_used());
 
     glm::vec3 dir = end - origin;
     float length = glm::length(dir);
     length = fmaxf(length - tip_length_, 0.0f);
     dir = glm::normalize(dir);
-    glm::vec3 unitx(1.0f, 0.0f, 0.0f);
+    constexpr glm::vec3 unitx(1.0f, 0.0f, 0.0f);
     glm::vec3 axis = glm::cross(unitx, dir);
     if (glm::dot(axis, axis) < 1e-9f) {
         axis = glm::vec3(0.0f, 1.0f, 0.0f);
@@ -112,14 +113,14 @@ void Arrow::draw(glm::vec3 origin, glm::vec3 end, Shader &shader) const {
     glm::mat4 stem_model = glm::mat4(1.0f);
     stem_model = glm::translate(stem_model, origin + 0.5f * length * dir);
     stem_model = glm::rotate(stem_model, angle, axis);
-    stem_model = glm::scale(stem_model, glm::vec3(0.5f * length, 1.0f, 1.0f));
+    stem_model = glm::scale(stem_model, glm::vec3(0.5f * length, scale, scale));
     shader.set_mat4("model", stem_model);
     stem_.draw();
 
     glm::mat4 tip_model = glm::mat4(1.0f);
-    tip_model = glm::translate(tip_model, origin + 0.5f * length * dir);
+    tip_model = glm::translate(tip_model, origin + 1.0f * length * dir);
     tip_model = glm::rotate(tip_model, angle, axis);
-    tip_model = glm::translate(tip_model, glm::vec3(0.5f * length, 0.0f, 0.0f));
+    tip_model = glm::scale(tip_model, glm::vec3(scale));
     shader.set_mat4("model", tip_model);
     tip_.draw();
 }
@@ -128,5 +129,5 @@ void Arrow::draw(const Planet &planet, Shader &shader) const {
     glm::vec3 origin =
         planet.position + planet.radius * glm::normalize(planet.velocity);
     glm::vec3 end = origin + planet.velocity;
-    draw(origin, end, shader);
+    draw(origin, end, planet.radius, shader);
 }
