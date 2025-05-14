@@ -21,10 +21,10 @@ Mesh gen_sphere_mesh(unsigned int stacks, unsigned int sectors) {
     std::vector<SphereVertex> vertices;
     vertices.reserve((stacks + 1) * (sectors + 1));
     for (unsigned int stack = 0; stack <= stacks; stack++) {
-        double psi = M_PI * stack / stacks - M_PI_2;
+        double psi = PI * stack / stacks - PI_2;
         double y = sin(psi);
         for (unsigned int sector = 0; sector <= sectors; sector++) {
-            double theta = 2.0 * M_PI * sector / sectors;
+            double theta = 2.0 * PI * sector / sectors;
             double x = sin(theta) * cos(psi);
             double z = cos(theta) * cos(psi);
             glm::vec3 pos = {x, y, z};
