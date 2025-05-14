@@ -1,13 +1,15 @@
 #ifndef SHADER_HPP
 #define SHADER_HPP
 
+#include <filesystem>
 #include <glm/glm.hpp>
 
 class Shader {
 public:
     Shader();
     ~Shader();
-    Shader(const char *vertex_path, const char *fragment_path);
+    Shader(std::filesystem::path vertex_path,
+           std::filesystem::path fragment_path);
     Shader(const Shader &) = delete;
     Shader &operator=(const Shader &) = delete;
 

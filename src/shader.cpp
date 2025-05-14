@@ -3,7 +3,6 @@
 #include <glad/gl.h>
 #include <glm/gtc/type_ptr.hpp>
 #include <iostream>
-#include <vector>
 
 #include "shader.hpp"
 
@@ -11,16 +10,23 @@ unsigned int Shader::current_used_ = 0;
 
 Shader::Shader() : id_(0) {}
 
-Shader::Shader(const char *vertex_path, const char *fragment_path)
-    : id_(glCreateProgram()) {
-    int vert_size = std::filesystem::file_size(vertex_path);
-    std::vector<char> vert_buf(vert_size);
-    std::ifstream vert_stream(vertex_path, std::ios::binary);
-    vert_stream.read(&vert_buf[0], vert_size);
+static std::string load_shader(std::filesystem::path path) {
+    size_t file_size = std::filesystem::file_size(path);
+    std::string buf(file_size, ' ');
+    std::ifstream stream(path, std::ios::binary);
+    stream.read(buf.data(), file_size);
+    return buf;
+}
 
-    const char *vert_str = &vert_buf[0];
+Shader::Shader(std::filesystem::path vertex_path,
+               std::filesystem::path fragment_path)
+    : id_(glCreateProgram()) {
+
+    std::string vert_str = load_shader(vertex_path);
+    const char *vert_ptr = vert_str.data();
+    const int vert_size = vert_str.size();
     unsigned int vert_shader = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vert_shader, 1, &vert_str, &vert_size);
+    glShaderSource(vert_shader, 1, &vert_ptr, &vert_size);
     glCompileShader(vert_shader);
     int status;
     glGetShaderiv(vert_shader, GL_COMPILE_STATUS, &status);
@@ -31,14 +37,11 @@ Shader::Shader(const char *vertex_path, const char *fragment_path)
         throw std::runtime_error("Failed to compile vertex shader");
     }
 
-    int frag_size = std::filesystem::file_size(fragment_path);
-    std::vector<char> frag_buf(frag_size);
-    std::ifstream frag_stream(fragment_path);
-    frag_stream.read(&frag_buf[0], frag_size);
-
-    const char *frag_str = &frag_buf[0];
+    std::string frag_str = load_shader(fragment_path);
+    const char *frag_ptr = frag_str.data();
+    const int frag_size = frag_str.size();
     unsigned int frag_shader = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(frag_shader, 1, &frag_str, &frag_size);
+    glShaderSource(frag_shader, 1, &frag_ptr, &frag_size);
     glCompileShader(frag_shader);
     glGetShaderiv(frag_shader, GL_COMPILE_STATUS, &status);
     if (!status) {
