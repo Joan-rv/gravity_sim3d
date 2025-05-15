@@ -44,7 +44,7 @@ void run() {
 
     Mesh sphere_mesh = gen_sphere_mesh(20, 20);
     Shader sphere_shader(DATAPATH("shaders/sphere.vert"),
-                         DATAPATH("shaders/sphere.frag"));
+                         DATAPATH("shaders/lighting.frag"));
 
     Mesh skysphere_mesh(&skysphere_vertices, sizeof(skysphere_vertices),
                         skysphere_attribs, skysphere_indices);
@@ -54,13 +54,9 @@ void run() {
 
     Arrow arrow(0.5f, 0.3f, 0.1f, 20);
     Shader arrow_shader(DATAPATH("shaders/arrow.vert"),
-                        DATAPATH("shaders/arrow.frag"));
+                        DATAPATH("shaders/lighting.frag"));
     arrow_shader.use();
     arrow_shader.set_vec4("color", glm::vec4(0.0f, 0.0f, 1.0f, 1.0f));
-
-    Shader normals_shader(DATAPATH("shaders/normals.vert"),
-                          DATAPATH("shaders/normals.geom"),
-                          DATAPATH("shaders/normals.frag"));
 
     std::vector<Planet> planets = {{{0.0f, 0.0f, 0.0f},
                                     {0.0f, 0.0f, 0.0f},
@@ -127,10 +123,6 @@ void run() {
             if (ui.show_vectors()) {
                 arrow_shader.use();
                 arrow.draw(ui.new_planet(), arrow_shader);
-                normals_shader.use();
-                normals_shader.set_mat4("projection", projection);
-                normals_shader.set_mat4("view", camera.view());
-                arrow.draw(ui.new_planet(), normals_shader);
             }
             ui.draw(camera);
             if (ui.create_new_planet()) {
