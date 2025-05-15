@@ -162,6 +162,7 @@ Shader::Shader(std::filesystem::path vertex_path,
 
     glDeleteShader(vert_shader);
     glDeleteShader(frag_shader);
+    glDeleteShader(geom_shader);
 }
 
 Shader::~Shader() { glDeleteProgram(id_); }
