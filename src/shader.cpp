@@ -100,6 +100,70 @@ Shader::Shader(std::filesystem::path vertex_path,
     glDeleteShader(frag_shader);
 }
 
+Shader::Shader(std::filesystem::path vertex_path,
+               std::filesystem::path geometry_path,
+               std::filesystem::path fragment_path)
+    : id_(glCreateProgram()) {
+
+    std::string vert_str = load_shader(vertex_path);
+    const char *vert_ptr = vert_str.data();
+    const int vert_size = vert_str.size();
+    unsigned int vert_shader = glCreateShader(GL_VERTEX_SHADER);
+    glShaderSource(vert_shader, 1, &vert_ptr, &vert_size);
+    glCompileShader(vert_shader);
+    int status;
+    glGetShaderiv(vert_shader, GL_COMPILE_STATUS, &status);
+    if (!status) {
+        char info_log[512];
+        glGetShaderInfoLog(vert_shader, 512, NULL, info_log);
+        std::cerr << "Failed to compile vertex shader\n" << info_log << '\n';
+        throw std::runtime_error("Failed to compile vertex shader");
+    }
+
+    std::string frag_str = load_shader(fragment_path);
+    const char *frag_ptr = frag_str.data();
+    const int frag_size = frag_str.size();
+    unsigned int frag_shader = glCreateShader(GL_FRAGMENT_SHADER);
+    glShaderSource(frag_shader, 1, &frag_ptr, &frag_size);
+    glCompileShader(frag_shader);
+    glGetShaderiv(frag_shader, GL_COMPILE_STATUS, &status);
+    if (!status) {
+        char info_log[512];
+        glGetShaderInfoLog(frag_shader, 512, NULL, info_log);
+        std::cerr << "Failed to compile fragment shader\n" << info_log << '\n';
+        throw std::runtime_error("Failed to compile fragment shader");
+    }
+
+    std::string geom_str = load_shader(geometry_path);
+    const char *geom_ptr = geom_str.data();
+    const int geom_size = geom_str.size();
+    unsigned int geom_shader = glCreateShader(GL_GEOMETRY_SHADER);
+    glShaderSource(geom_shader, 1, &geom_ptr, &geom_size);
+    glCompileShader(geom_shader);
+    glGetShaderiv(geom_shader, GL_COMPILE_STATUS, &status);
+    if (!status) {
+        char info_log[512];
+        glGetShaderInfoLog(geom_shader, 512, NULL, info_log);
+        std::cerr << "Failed to compile geometry shader\n" << info_log << '\n';
+        throw std::runtime_error("Failed to compile geometry shader");
+    }
+
+    glAttachShader(id_, vert_shader);
+    glAttachShader(id_, frag_shader);
+    glAttachShader(id_, geom_shader);
+    glLinkProgram(id_);
+    glGetProgramiv(id_, GL_LINK_STATUS, &status);
+    if (!status) {
+        char info_log[512];
+        glGetProgramInfoLog(id_, 512, NULL, info_log);
+        std::cerr << "Failed to link shader\n" << info_log << '\n';
+        throw std::runtime_error("Failed to link shader");
+    }
+
+    glDeleteShader(vert_shader);
+    glDeleteShader(frag_shader);
+}
+
 Shader::~Shader() { glDeleteProgram(id_); }
 
 void Shader::set_mat4(const char *name, glm::mat4 value) {

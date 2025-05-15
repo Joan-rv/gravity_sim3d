@@ -58,6 +58,10 @@ void run() {
     arrow_shader.use();
     arrow_shader.set_vec4("color", glm::vec4(0.0f, 0.0f, 1.0f, 1.0f));
 
+    Shader normals_shader(DATAPATH("shaders/normals.vert"),
+                          DATAPATH("shaders/normals.geom"),
+                          DATAPATH("shaders/normals.frag"));
+
     std::vector<Planet> planets = {{{0.0f, 0.0f, 0.0f},
                                     {0.0f, 0.0f, 0.0f},
                                     {0.0f, 0.0f, 0.0f},
@@ -123,6 +127,10 @@ void run() {
             if (ui.show_vectors()) {
                 arrow_shader.use();
                 arrow.draw(ui.new_planet(), arrow_shader);
+                normals_shader.use();
+                normals_shader.set_mat4("projection", projection);
+                normals_shader.set_mat4("view", camera.view());
+                arrow.draw(ui.new_planet(), normals_shader);
             }
             ui.draw(camera);
             if (ui.create_new_planet()) {

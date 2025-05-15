@@ -10,6 +10,9 @@ public:
     ~Shader();
     Shader(std::filesystem::path vertex_path,
            std::filesystem::path fragment_path);
+    Shader(std::filesystem::path vertex_path,
+           std::filesystem::path geometry_path,
+           std::filesystem::path fragment_path);
     Shader(const Shader &) = delete;
     Shader &operator=(const Shader &) = delete;
 
