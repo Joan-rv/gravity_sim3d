@@ -7,86 +7,120 @@
 #include "planet.hpp"
 #include "shader.hpp"
 
+struct ArrowVertex {
+    glm::vec3 position;
+    glm::vec3 normal;
+};
+
+static const std::vector<VertexAttribute> arrow_attribs = {
+    {0, 3, GL_FLOAT, false, sizeof(ArrowVertex),
+     offsetof(ArrowVertex, position)},
+    {
+        1,
+        3,
+        GL_FLOAT,
+        false,
+        sizeof(ArrowVertex),
+        offsetof(ArrowVertex, normal),
+    }};
+
 static Mesh gen_stem(float width, size_t resolution) {
-    std::vector<glm::vec3> vertices;
+    std::vector<ArrowVertex> vertices;
     vertices.reserve(2 + 2 * (resolution + 1));
-    vertices.push_back({-1.0f, 0.0f, 0.0f});
+    vertices.push_back({{-1.0f, 0.0f, 0.0f}, {-1.0f, 0.0f, 0.0f}});
     for (size_t i = 0; i <= resolution; i++) {
         float angle = 2.0f * PI * i / resolution;
-        vertices.push_back({-1.0f, width * sin(angle), width * cos(angle)});
+        vertices.push_back({{-1.0f, width * sin(angle), width * cos(angle)},
+                            {-1.0f, 0.0f, 0.0f}});
     }
-    vertices.push_back({1.0f, 0.0f, 0.0f});
     for (size_t i = 0; i <= resolution; i++) {
         float angle = 2.0f * PI * i / resolution;
-        vertices.push_back({1.0f, width * sin(angle), width * cos(angle)});
+        vertices.push_back({{-1.0f, width * sin(angle), width * cos(angle)},
+                            {0.0f, sin(angle), cos(angle)}});
     }
-    assert(2 + 2 * (resolution + 1) == vertices.size());
+    for (size_t i = 0; i <= resolution; i++) {
+        float angle = 2.0f * PI * i / resolution;
+        vertices.push_back({{1.0f, width * sin(angle), width * cos(angle)},
+                            {0.0f, sin(angle), cos(angle)}});
+    }
+    vertices.push_back({{1.0f, 0.0f, 0.0f}, {1.0f, 0.0f, 0.0f}});
+    for (size_t i = 0; i <= resolution; i++) {
+        float angle = 2.0f * PI * i / resolution;
+        vertices.push_back({{1.0f, width * sin(angle), width * cos(angle)},
+                            {1.0f, 0.0f, 0.0f}});
+    }
+    assert(2 + 4 * (resolution + 1) == vertices.size());
 
     std::vector<unsigned int> indices;
     indices.reserve(4 * 3 * resolution);
-    const size_t stem_bot_center = 0;
-    const size_t stem_bot = 1;
-    const size_t stem_top_center = 1 + resolution + 1;
-    const size_t stem_top = 1 + resolution + 2;
+    const size_t bot_center = 0;
+    const size_t bot_outer = 1;
+    const size_t bot_cilinder = 1 + (resolution + 1);
+    const size_t top_cilinder = 1 + 2 * (resolution + 1);
+    const size_t top_center = 1 + 3 * (resolution + 1);
+    const size_t top_outer = 2 + 3 * (resolution + 1);
     for (size_t i = 0; i < resolution; i++) {
-        indices.push_back(stem_bot_center);
-        indices.push_back(stem_bot + i);
-        indices.push_back(stem_bot + i + 1);
+        indices.push_back(bot_center);
+        indices.push_back(bot_outer + i);
+        indices.push_back(bot_outer + i + 1);
     }
     for (size_t i = 0; i < resolution; i++) {
-        indices.push_back(stem_bot + i);
-        indices.push_back(stem_top + i);
-        indices.push_back(stem_top + i + 1);
+        indices.push_back(bot_cilinder + i);
+        indices.push_back(top_cilinder + i);
+        indices.push_back(top_cilinder + i + 1);
 
-        indices.push_back(stem_top + i + 1);
-        indices.push_back(stem_bot + i + 1);
-        indices.push_back(stem_bot + i);
+        indices.push_back(top_cilinder + i + 1);
+        indices.push_back(bot_cilinder + i + 1);
+        indices.push_back(bot_cilinder + i);
     }
     for (size_t i = 0; i < resolution; i++) {
-        indices.push_back(stem_top_center);
-        indices.push_back(stem_top + i + 1);
-        indices.push_back(stem_top + i);
+        indices.push_back(top_center);
+        indices.push_back(top_outer + i + 1);
+        indices.push_back(top_outer + i);
     }
     assert(4 * 3 * resolution == indices.size());
 
-    const std::vector<VertexAttribute> attribs = {
-        {0, 3, GL_FLOAT, false, sizeof(glm::vec3), 0}};
-    return Mesh(&vertices[0], vertices.size() * sizeof(glm::vec3), attribs,
-                indices);
+    return Mesh(&vertices[0], vertices.size() * sizeof(ArrowVertex),
+                arrow_attribs, indices);
 }
 
 static Mesh gen_tip(float tip_length, float width, size_t resolution) {
-    std::vector<glm::vec3> vertices;
+    std::vector<ArrowVertex> vertices;
     vertices.reserve(2 + resolution + 1);
-    vertices.push_back({0.0f, 0.0f, 0.0f});
+    vertices.push_back({{0.0f, 0.0f, 0.0f}, {-1.0f, 0.0f, 0.0f}});
     for (size_t i = 0; i <= resolution; i++) {
         float angle = 2.0f * PI * i / resolution;
-        vertices.push_back({0.0f, width * sin(angle), width * cos(angle)});
+        vertices.push_back({{0.0f, width * sin(angle), width * cos(angle)},
+                            {-1.0f, 0.0f, 0.0f}});
     }
-    vertices.push_back({tip_length, 0.0f, 0.0f});
-    assert(2 + resolution + 1 == vertices.size());
+    for (size_t i = 0; i <= resolution; i++) {
+        float angle = 2.0f * PI * i / resolution;
+        vertices.push_back({{0.0f, width * sin(angle), width * cos(angle)},
+                            {0.0f, sin(angle), cos(angle)}});
+    }
+    vertices.push_back({{tip_length, 0.0f, 0.0f}, {1.0f, 0.0f, 0.0f}});
+    assert(2 + 2 * (resolution + 1) == vertices.size());
 
     std::vector<unsigned int> indices;
     indices.reserve(2 * 3 * resolution);
-    const size_t tip_bot_center = 0;
-    const size_t tip_bot = 1;
-    const size_t tip_top_center = 1 + resolution + 1;
+    const size_t bot_center = 0;
+    const size_t bot_inner = 1;
+    const size_t bot_outer = 1 + (resolution + 1);
+    const size_t top_center = 1 + 2 * (resolution + 1);
     for (size_t i = 0; i < resolution; i++) {
-        indices.push_back(tip_bot_center);
-        indices.push_back(tip_bot + i);
-        indices.push_back(tip_bot + i + 1);
+        indices.push_back(bot_center);
+        indices.push_back(bot_inner + i);
+        indices.push_back(bot_inner + i + 1);
     }
     for (size_t i = 0; i < resolution; i++) {
-        indices.push_back(tip_bot + i);
-        indices.push_back(tip_top_center);
-        indices.push_back(tip_bot + i + 1);
+        indices.push_back(bot_outer + i);
+        indices.push_back(top_center);
+        indices.push_back(bot_outer + i + 1);
     }
     assert(2 * 3 * resolution == indices.size());
 
-    const std::vector<VertexAttribute> attribs = {
-        {0, 3, GL_FLOAT, false, sizeof(glm::vec3), 0}};
-    return Mesh(&vertices[0], vertices.size() * sizeof(glm::vec3), attribs,
-                indices);
+    return Mesh(&vertices[0], vertices.size() * sizeof(ArrowVertex),
+                arrow_attribs, indices);
 }
 
 Arrow::Arrow(float tip_length, float tip_width, float stem_width,
