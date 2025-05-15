@@ -3,14 +3,17 @@
 #include <glad/gl.h>
 #include <glm/gtc/type_ptr.hpp>
 #include <iostream>
+#include <stdexcept>
 
 #include "shader.hpp"
+
+namespace fs = std::filesystem;
 
 unsigned int Shader::current_used_ = 0;
 
 Shader::Shader() : id_(0) {}
 
-static std::string load_str_from(std::filesystem::path path) {
+static std::string load_str_from(fs::path path) {
     size_t file_size = std::filesystem::file_size(path);
     std::string buf(file_size, ' ');
     std::ifstream stream(path);
@@ -18,7 +21,7 @@ static std::string load_str_from(std::filesystem::path path) {
     return buf;
 }
 
-static std::string load_shader(std::filesystem::path path) {
+static std::string load_shader(fs::path path) {
     std::string data(load_str_from(path));
 
     size_t line = 0;
@@ -52,42 +55,43 @@ static std::string load_shader(std::filesystem::path path) {
     return data;
 }
 
+class ShaderSource {
+public:
+    ShaderSource(GLenum type, fs::path path);
+    ~ShaderSource() { glDeleteShader(ref_); }
+    int ref() { return ref_; }
+
+private:
+    int ref_;
+};
+ShaderSource::ShaderSource(GLenum type, fs::path path)
+    : ref_(glCreateShader(type)) {
+    std::string src_str = load_shader(path);
+    const char *src_ptr = src_str.data();
+    const int src_size = src_str.size();
+    glShaderSource(ref_, 1, &src_ptr, &src_size);
+    glCompileShader(ref_);
+    int status;
+    glGetShaderiv(ref_, GL_COMPILE_STATUS, &status);
+    if (!status) {
+        char info_log[512];
+        glGetShaderInfoLog(ref_, 512, NULL, info_log);
+        std::cerr << "Failed to compile shader\n" << info_log << '\n';
+        throw std::runtime_error("Failed to compile shader");
+    }
+}
+
 Shader::Shader(std::filesystem::path vertex_path,
                std::filesystem::path fragment_path)
     : id_(glCreateProgram()) {
 
-    std::string vert_str = load_shader(vertex_path);
-    const char *vert_ptr = vert_str.data();
-    const int vert_size = vert_str.size();
-    unsigned int vert_shader = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vert_shader, 1, &vert_ptr, &vert_size);
-    glCompileShader(vert_shader);
-    int status;
-    glGetShaderiv(vert_shader, GL_COMPILE_STATUS, &status);
-    if (!status) {
-        char info_log[512];
-        glGetShaderInfoLog(vert_shader, 512, NULL, info_log);
-        std::cerr << "Failed to compile vertex shader\n" << info_log << '\n';
-        throw std::runtime_error("Failed to compile vertex shader");
-    }
+    ShaderSource vertex(GL_VERTEX_SHADER, vertex_path);
+    ShaderSource fragment(GL_FRAGMENT_SHADER, fragment_path);
 
-    std::string frag_str = load_shader(fragment_path);
-    const char *frag_ptr = frag_str.data();
-    const int frag_size = frag_str.size();
-    unsigned int frag_shader = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(frag_shader, 1, &frag_ptr, &frag_size);
-    glCompileShader(frag_shader);
-    glGetShaderiv(frag_shader, GL_COMPILE_STATUS, &status);
-    if (!status) {
-        char info_log[512];
-        glGetShaderInfoLog(frag_shader, 512, NULL, info_log);
-        std::cerr << "Failed to compile fragment shader\n" << info_log << '\n';
-        throw std::runtime_error("Failed to compile fragment shader");
-    }
-
-    glAttachShader(id_, vert_shader);
-    glAttachShader(id_, frag_shader);
+    glAttachShader(id_, vertex.ref());
+    glAttachShader(id_, fragment.ref());
     glLinkProgram(id_);
+    int status;
     glGetProgramiv(id_, GL_LINK_STATUS, &status);
     if (!status) {
         char info_log[512];
@@ -95,9 +99,6 @@ Shader::Shader(std::filesystem::path vertex_path,
         std::cerr << "Failed to link shader\n" << info_log << '\n';
         throw std::runtime_error("Failed to link shader");
     }
-
-    glDeleteShader(vert_shader);
-    glDeleteShader(frag_shader);
 }
 
 Shader::Shader(std::filesystem::path vertex_path,
@@ -105,53 +106,15 @@ Shader::Shader(std::filesystem::path vertex_path,
                std::filesystem::path fragment_path)
     : id_(glCreateProgram()) {
 
-    std::string vert_str = load_shader(vertex_path);
-    const char *vert_ptr = vert_str.data();
-    const int vert_size = vert_str.size();
-    unsigned int vert_shader = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vert_shader, 1, &vert_ptr, &vert_size);
-    glCompileShader(vert_shader);
-    int status;
-    glGetShaderiv(vert_shader, GL_COMPILE_STATUS, &status);
-    if (!status) {
-        char info_log[512];
-        glGetShaderInfoLog(vert_shader, 512, NULL, info_log);
-        std::cerr << "Failed to compile vertex shader\n" << info_log << '\n';
-        throw std::runtime_error("Failed to compile vertex shader");
-    }
+    ShaderSource vertex(GL_VERTEX_SHADER, vertex_path);
+    ShaderSource fragment(GL_FRAGMENT_SHADER, fragment_path);
+    ShaderSource geometry(GL_GEOMETRY_SHADER, geometry_path);
 
-    std::string frag_str = load_shader(fragment_path);
-    const char *frag_ptr = frag_str.data();
-    const int frag_size = frag_str.size();
-    unsigned int frag_shader = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(frag_shader, 1, &frag_ptr, &frag_size);
-    glCompileShader(frag_shader);
-    glGetShaderiv(frag_shader, GL_COMPILE_STATUS, &status);
-    if (!status) {
-        char info_log[512];
-        glGetShaderInfoLog(frag_shader, 512, NULL, info_log);
-        std::cerr << "Failed to compile fragment shader\n" << info_log << '\n';
-        throw std::runtime_error("Failed to compile fragment shader");
-    }
-
-    std::string geom_str = load_shader(geometry_path);
-    const char *geom_ptr = geom_str.data();
-    const int geom_size = geom_str.size();
-    unsigned int geom_shader = glCreateShader(GL_GEOMETRY_SHADER);
-    glShaderSource(geom_shader, 1, &geom_ptr, &geom_size);
-    glCompileShader(geom_shader);
-    glGetShaderiv(geom_shader, GL_COMPILE_STATUS, &status);
-    if (!status) {
-        char info_log[512];
-        glGetShaderInfoLog(geom_shader, 512, NULL, info_log);
-        std::cerr << "Failed to compile geometry shader\n" << info_log << '\n';
-        throw std::runtime_error("Failed to compile geometry shader");
-    }
-
-    glAttachShader(id_, vert_shader);
-    glAttachShader(id_, frag_shader);
-    glAttachShader(id_, geom_shader);
+    glAttachShader(id_, vertex.ref());
+    glAttachShader(id_, fragment.ref());
+    glAttachShader(id_, geometry.ref());
     glLinkProgram(id_);
+    int status;
     glGetProgramiv(id_, GL_LINK_STATUS, &status);
     if (!status) {
         char info_log[512];
@@ -159,10 +122,6 @@ Shader::Shader(std::filesystem::path vertex_path,
         std::cerr << "Failed to link shader\n" << info_log << '\n';
         throw std::runtime_error("Failed to link shader");
     }
-
-    glDeleteShader(vert_shader);
-    glDeleteShader(frag_shader);
-    glDeleteShader(geom_shader);
 }
 
 Shader::~Shader() { glDeleteProgram(id_); }
