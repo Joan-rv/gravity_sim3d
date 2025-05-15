@@ -15,7 +15,7 @@ uniform mat4 model;
 
 void main() {
     gl_Position = projection * view * model * vec4(a_pos, 1.0);
-    vs_out.normal = normalize(mat3(transpose(inverse(view * model))) * a_normal);
+    vs_out.normal = mat3(transpose(inverse(view * model))) * a_normal;
     vs_out.frag_pos = vec3(view * model * vec4(a_pos, 1.0));
-    vs_out.light_dir = -normalize(mat3(view) * vec3(0.2, -1.0, -0.1));
+    vs_out.light_dir = -mat3(view) * vec3(0.2, -1.0, -0.1);
 }
