@@ -93,10 +93,14 @@ static Mesh gen_tip(float tip_length, float width, size_t resolution) {
         vertices.push_back({{0.0f, width * sin(angle), width * cos(angle)},
                             {-1.0f, 0.0f, 0.0f}});
     }
+
+    const float inv_len =
+        1.0f / std::sqrt(width * width + tip_length * tip_length);
     for (size_t i = 0; i <= resolution; i++) {
         float angle = 2.0f * PI * i / resolution;
         vertices.push_back({{0.0f, width * sin(angle), width * cos(angle)},
-                            {0.0f, sin(angle), cos(angle)}});
+                            inv_len * glm::vec3(width, tip_length * sin(angle),
+                                                tip_length * cos(angle))});
     }
     vertices.push_back({{tip_length, 0.0f, 0.0f}, {1.0f, 0.0f, 0.0f}});
     assert(2 + 2 * (resolution + 1) == vertices.size());
