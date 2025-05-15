@@ -15,9 +15,12 @@ void main() {
     const float strength_diffuse = 0.7;
     const float strength_specular = 0.5;
 
-    float diff = max(dot(fs_in.normal, fs_in.light_dir), 0.0);
+    vec3 normal = normalize(fs_in.normal);
+    vec3 light_dir = normalize(fs_in.light_dir);
 
-    vec3 reflect_dir = reflect(fs_in.light_dir, fs_in.normal);
+    float diff = max(dot(normal, light_dir), 0.0);
+
+    vec3 reflect_dir = reflect(light_dir, normal);
     vec3 view_dir = normalize(fs_in.frag_pos);
     float spec = pow(max(dot(view_dir, reflect_dir), 0.0), 32);
 
