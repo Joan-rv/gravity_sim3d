@@ -43,7 +43,7 @@ void run() {
     Ui ui(window);
 
     Mesh sphere_mesh = gen_sphere_mesh(20, 20);
-    Shader sphere_shader(DATAPATH("shaders/sphere.vert"),
+    Shader sphere_shader(DATAPATH("shaders/lighting.vert"),
                          DATAPATH("shaders/lighting.frag"));
 
     Mesh skysphere_mesh(&skysphere_vertices, sizeof(skysphere_vertices),
@@ -53,7 +53,7 @@ void run() {
     Texture skysphere_texture(DATAPATH("textures/subdued_blue_nebulae_1.png"));
 
     Arrow arrow(0.5f, 0.3f, 0.1f, 20);
-    Shader arrow_shader(DATAPATH("shaders/arrow.vert"),
+    Shader arrow_shader(DATAPATH("shaders/lighting.vert"),
                         DATAPATH("shaders/lighting.frag"));
     arrow_shader.use();
     arrow_shader.set_vec4("color", glm::vec4(0.0f, 0.0f, 1.0f, 1.0f));

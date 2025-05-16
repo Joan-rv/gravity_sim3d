@@ -6,13 +6,16 @@
 
 struct SphereVertex {
     glm::vec3 pos;
+    glm::vec3 normal;
     glm::vec2 tex_coords;
 };
 
 const std::vector<VertexAttribute> sphere_attributes = {
     {0, 3, GL_FLOAT, GL_FALSE, sizeof(SphereVertex),
      offsetof(SphereVertex, pos)},
-    {1, 2, GL_FLOAT, GL_FALSE, sizeof(SphereVertex),
+    {1, 3, GL_FLOAT, GL_FALSE, sizeof(SphereVertex),
+     offsetof(SphereVertex, normal)},
+    {2, 2, GL_FLOAT, GL_FALSE, sizeof(SphereVertex),
      offsetof(SphereVertex, tex_coords)}};
 
 Mesh gen_sphere_mesh(unsigned int stacks, unsigned int sectors) {
@@ -28,11 +31,12 @@ Mesh gen_sphere_mesh(unsigned int stacks, unsigned int sectors) {
             double x = sin(theta) * cos(psi);
             double z = cos(theta) * cos(psi);
             glm::vec3 pos = {x, y, z};
+            glm::vec3 normal = pos;
             glm::vec2 tex_coords = {
                 static_cast<float>(sector) / sectors,
                 static_cast<float>(stack) / stacks,
             };
-            vertices.push_back({pos, tex_coords});
+            vertices.push_back({pos, normal, tex_coords});
         }
     }
 
