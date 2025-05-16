@@ -56,7 +56,7 @@ void run() {
     Shader arrow_shader(DATAPATH("shaders/lighting.vert"),
                         DATAPATH("shaders/lighting.frag"));
     arrow_shader.use();
-    arrow_shader.set_vec4("color", glm::vec4(0.0f, 0.0f, 1.0f, 1.0f));
+    arrow_shader.set_vec4("u_color", glm::vec4(0.0f, 0.0f, 1.0f, 1.0f));
 
     std::vector<Planet> planets = {{{0.0f, 0.0f, 0.0f},
                                     {0.0f, 0.0f, 0.0f},
@@ -85,13 +85,20 @@ void run() {
             }
         }
 
+        glm::vec3 light_dir = glm::normalize(glm::mat3(camera.view()) *
+                                             glm::vec3(0.2f, -1.0f, -0.1f));
+        sphere_shader.use();
+        sphere_shader.set_vec3("u_light_dir", light_dir);
+        arrow_shader.use();
+        arrow_shader.set_vec3("u_light_dir", light_dir);
+
         glm::mat4 projection =
             glm::perspective(PI_4, controller.aspect_ratio(), 0.1f, 100.0f);
 
         sphere_shader.use();
         sphere_shader.set_mat4("projection", projection);
         sphere_shader.set_mat4("view", camera.view());
-        sphere_shader.set_vec4("color", glm::vec4(1.0f));
+        sphere_shader.set_vec4("u_color", glm::vec4(1.0f));
         for (const Planet &planet : planets) {
             sphere_shader.set_mat4("model", planet.model());
             sphere_mesh.draw();
@@ -117,7 +124,8 @@ void run() {
 
         if (controller.paused()) {
             sphere_shader.use();
-            sphere_shader.set_vec4("color", glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
+            sphere_shader.set_vec4("u_color",
+                                   glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
             sphere_shader.set_mat4("model", ui.new_planet().model());
             sphere_mesh.draw();
             if (ui.show_vectors()) {
