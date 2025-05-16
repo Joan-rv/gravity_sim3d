@@ -126,6 +126,11 @@ Shader::Shader(std::filesystem::path vertex_path,
 
 Shader::~Shader() { glDeleteProgram(id_); }
 
+void Shader::set_mat3(const char *name, glm::mat3 value) {
+    assert(current_used_ == id_);
+    int location = glGetUniformLocation(id_, name);
+    glUniformMatrix3fv(location, 1, GL_FALSE, glm::value_ptr(value));
+}
 void Shader::set_mat4(const char *name, glm::mat4 value) {
     assert(current_used_ == id_);
     int location = glGetUniformLocation(id_, name);
@@ -145,6 +150,16 @@ void Shader::set_int(const char *name, int value) {
     assert(current_used_ == id_);
     int location = glGetUniformLocation(id_, name);
     glUniform1i(location, value);
+}
+
+void Shader::set_mvp(glm::mat4 projection, glm::mat4 view, glm::mat4 model) {
+    glm::mat4 mv = view * model;
+    glm::mat4 mvp = projection * mv;
+    glm::mat4 normal_mv = glm::mat3(glm::transpose(glm::inverse(mv)));
+
+    set_mat4("u_mvp", mvp);
+    set_mat3("u_normal_mv", normal_mv);
+    set_mat4("u_mv", mv);
 }
 
 void Shader::use() {

@@ -9,12 +9,12 @@ out VS_OUT {
     vec3 frag_pos;
 } vs_out;
 
-uniform mat4 projection;
-uniform mat4 view;
-uniform mat4 model;
+uniform mat4 u_mvp;
+uniform mat3 u_normal_mv;
+uniform mat4 u_mv;
 
 void main() {
-    gl_Position = projection * view * model * vec4(a_pos, 1.0);
-    vs_out.normal = mat3(transpose(inverse(view * model))) * a_normal;
-    vs_out.frag_pos = vec3(view * model * vec4(a_pos, 1.0));
+    gl_Position = u_mvp * vec4(a_pos, 1.0);
+    vs_out.normal = u_normal_mv * a_normal;
+    vs_out.frag_pos = vec3(u_mv * vec4(a_pos, 1.0));
 }

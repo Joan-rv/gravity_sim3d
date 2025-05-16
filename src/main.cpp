@@ -96,20 +96,16 @@ void run() {
             glm::perspective(PI_4, controller.aspect_ratio(), 0.1f, 100.0f);
 
         sphere_shader.use();
-        sphere_shader.set_mat4("projection", projection);
-        sphere_shader.set_mat4("view", camera.view());
         sphere_shader.set_vec4("u_color", glm::vec4(1.0f));
         for (const Planet &planet : planets) {
-            sphere_shader.set_mat4("model", planet.model());
+            sphere_shader.set_mvp(projection, camera.view(), planet.model());
             sphere_mesh.draw();
         }
 
         if (ui.show_vectors()) {
             arrow_shader.use();
-            arrow_shader.set_mat4("projection", projection);
-            arrow_shader.set_mat4("view", camera.view());
             for (const Planet &planet : planets) {
-                arrow.draw(planet, arrow_shader);
+                arrow.draw(planet, projection, camera.view(), arrow_shader);
             }
         }
 
@@ -126,11 +122,13 @@ void run() {
             sphere_shader.use();
             sphere_shader.set_vec4("u_color",
                                    glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
-            sphere_shader.set_mat4("model", ui.new_planet().model());
+            sphere_shader.set_mvp(projection, camera.view(),
+                                  ui.new_planet().model());
             sphere_mesh.draw();
             if (ui.show_vectors()) {
                 arrow_shader.use();
-                arrow.draw(ui.new_planet(), arrow_shader);
+                arrow.draw(ui.new_planet(), projection, camera.view(),
+                           arrow_shader);
             }
             ui.draw(camera);
             if (ui.create_new_planet()) {
