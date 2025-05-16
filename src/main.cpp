@@ -95,6 +95,8 @@ void run() {
         glm::mat4 projection =
             glm::perspective(PI_4, controller.aspect_ratio(), 0.1f, 100.0f);
 
+        arrow.set_matrices(projection, camera.view());
+
         sphere_shader.use();
         sphere_shader.set_vec4("u_color", glm::vec4(1.0f));
         for (const Planet &planet : planets) {
@@ -105,7 +107,7 @@ void run() {
         if (ui.show_vectors()) {
             arrow_shader.use();
             for (const Planet &planet : planets) {
-                arrow.draw(planet, projection, camera.view(), arrow_shader);
+                arrow.draw(planet, arrow_shader);
             }
         }
 
@@ -127,8 +129,7 @@ void run() {
             sphere_mesh.draw();
             if (ui.show_vectors()) {
                 arrow_shader.use();
-                arrow.draw(ui.new_planet(), projection, camera.view(),
-                           arrow_shader);
+                arrow.draw(ui.new_planet(), arrow_shader);
             }
             ui.draw(camera);
             if (ui.create_new_planet()) {
