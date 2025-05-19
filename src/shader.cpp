@@ -14,7 +14,7 @@ unsigned int Shader::current_used_ = 0;
 Shader::Shader() : id_(0) {}
 
 static std::string load_str_from(fs::path path) {
-    size_t file_size = std::filesystem::file_size(path);
+    size_t file_size = fs::file_size(path);
     std::string buf(file_size, ' ');
     std::ifstream stream(path);
     stream.read(buf.data(), file_size);
@@ -35,9 +35,9 @@ static std::string load_shader(fs::path path) {
         std::string_view prefix("#include ");
         if (data.compare(i, prefix.size(), prefix) == 0) {
             size_t end = next - i - prefix.size();
-            std::filesystem::path include_path =
+            fs::path include_path =
                 path.remove_filename() / (data.substr(i + prefix.size(), end));
-            if (std::filesystem::equivalent(include_path, path))
+            if (fs::equivalent(include_path, path))
                 continue;
             std::string include_str(load_str_from(include_path));
             data.replace(i, next - i, include_str);
@@ -81,8 +81,19 @@ ShaderSource::ShaderSource(GLenum type, fs::path path)
     }
 }
 
-Shader::Shader(std::filesystem::path vertex_path,
-               std::filesystem::path fragment_path)
+void link_shader(unsigned int id) {
+    glLinkProgram(id);
+    int status;
+    glGetProgramiv(id, GL_LINK_STATUS, &status);
+    if (!status) {
+        char info_log[512];
+        glGetProgramInfoLog(id, 512, NULL, info_log);
+        std::cerr << "Failed to link shader\n" << info_log << '\n';
+        throw std::runtime_error("Failed to link shader");
+    }
+}
+
+Shader::Shader(fs::path vertex_path, fs::path fragment_path)
     : id_(glCreateProgram()) {
 
     ShaderSource vertex(GL_VERTEX_SHADER, vertex_path);
@@ -90,20 +101,11 @@ Shader::Shader(std::filesystem::path vertex_path,
 
     glAttachShader(id_, vertex.ref());
     glAttachShader(id_, fragment.ref());
-    glLinkProgram(id_);
-    int status;
-    glGetProgramiv(id_, GL_LINK_STATUS, &status);
-    if (!status) {
-        char info_log[512];
-        glGetProgramInfoLog(id_, 512, NULL, info_log);
-        std::cerr << "Failed to link shader\n" << info_log << '\n';
-        throw std::runtime_error("Failed to link shader");
-    }
+    link_shader(id_);
 }
 
-Shader::Shader(std::filesystem::path vertex_path,
-               std::filesystem::path geometry_path,
-               std::filesystem::path fragment_path)
+Shader::Shader(fs::path vertex_path, fs::path geometry_path,
+               fs::path fragment_path)
     : id_(glCreateProgram()) {
 
     ShaderSource vertex(GL_VERTEX_SHADER, vertex_path);
@@ -113,15 +115,7 @@ Shader::Shader(std::filesystem::path vertex_path,
     glAttachShader(id_, vertex.ref());
     glAttachShader(id_, fragment.ref());
     glAttachShader(id_, geometry.ref());
-    glLinkProgram(id_);
-    int status;
-    glGetProgramiv(id_, GL_LINK_STATUS, &status);
-    if (!status) {
-        char info_log[512];
-        glGetProgramInfoLog(id_, 512, NULL, info_log);
-        std::cerr << "Failed to link shader\n" << info_log << '\n';
-        throw std::runtime_error("Failed to link shader");
-    }
+    link_shader(id_);
 }
 
 Shader::~Shader() { glDeleteProgram(id_); }
