@@ -1,4 +1,5 @@
 #include <glm/ext/matrix_transform.hpp>
+#include <glm/geometric.hpp>
 #include <glm/glm.hpp>
 
 #include "arrow.hpp"
@@ -94,32 +95,35 @@ static Mesh gen_tip(float tip_length, float width, size_t resolution) {
                             {-1.0f, 0.0f, 0.0f}});
     }
 
-    const float inv_len =
-        1.0f / std::sqrt(width * width + tip_length * tip_length);
-    for (size_t i = 0; i <= resolution; i++) {
-        float angle = 2.0f * PI * i / resolution;
-        vertices.push_back({{0.0f, width * sin(angle), width * cos(angle)},
-                            inv_len * glm::vec3(width, tip_length * sin(angle),
-                                                tip_length * cos(angle))});
+    glm::vec3 top = {tip_length, 0.0f, 0.0f};
+    for (size_t i = 0; i < resolution; i++) {
+        float a1 = 2.0f * PI * i / resolution;
+        float a2 = 2.0f * PI * (i + 1) / resolution;
+        glm::vec3 p1 = {0.0f, width * sin(a1), width * cos(a1)};
+        glm::vec3 p2 = {0.0f, width * sin(a2), width * cos(a2)};
+
+        glm::vec3 normal = glm::cross(p2 - top, p1 - top);
+        normal = glm::normalize(normal);
+        vertices.push_back({p1, normal});
+        vertices.push_back({top, normal});
+        vertices.push_back({p2, normal});
     }
-    vertices.push_back({{tip_length, 0.0f, 0.0f}, {1.0f, 0.0f, 0.0f}});
-    assert(2 + 2 * (resolution + 1) == vertices.size());
+    assert(1 + 1 * (resolution + 1) + 3 * resolution == vertices.size());
 
     std::vector<unsigned int> indices;
     indices.reserve(2 * 3 * resolution);
     const size_t bot_center = 0;
     const size_t bot_inner = 1;
-    const size_t bot_outer = 1 + (resolution + 1);
-    const size_t top_center = 1 + 2 * (resolution + 1);
+    const size_t outer_start = 1 + (resolution + 1);
     for (size_t i = 0; i < resolution; i++) {
         indices.push_back(bot_center);
         indices.push_back(bot_inner + i);
         indices.push_back(bot_inner + i + 1);
     }
     for (size_t i = 0; i < resolution; i++) {
-        indices.push_back(bot_outer + i);
-        indices.push_back(top_center);
-        indices.push_back(bot_outer + i + 1);
+        indices.push_back(outer_start + 3 * i + 0);
+        indices.push_back(outer_start + 3 * i + 1);
+        indices.push_back(outer_start + 3 * i + 2);
     }
     assert(2 * 3 * resolution == indices.size());
 
