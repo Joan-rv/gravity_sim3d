@@ -3,6 +3,7 @@
 #include <glad/gl.h>
 #include <glm/gtc/type_ptr.hpp>
 #include <iostream>
+#include <set>
 #include <stdexcept>
 
 #include "shader.hpp"
@@ -13,6 +14,12 @@ unsigned int Shader::current_used_ = 0;
 
 Shader::Shader() : id_(0) {}
 
+struct path_cmp {
+    bool operator()(const fs::path p1, const fs::path p2) const {
+        return fs::equivalent(p1, p2);
+    }
+};
+
 static std::string load_str_from(fs::path path) {
     size_t file_size = fs::file_size(path);
     std::string buf(file_size, ' ');
@@ -21,7 +28,8 @@ static std::string load_str_from(fs::path path) {
     return buf;
 }
 
-static std::string load_shader(fs::path path) {
+static std::string load_shader(fs::path path,
+                               std::set<fs::path, path_cmp> included = {}) {
     std::string data(load_str_from(path));
 
     size_t line = 0;
@@ -37,12 +45,16 @@ static std::string load_shader(fs::path path) {
             size_t end = next - i - prefix.size();
             fs::path include_path =
                 path.remove_filename() / (data.substr(i + prefix.size(), end));
-            if (fs::equivalent(include_path, path))
-                continue;
-            std::string include_str(load_str_from(include_path));
-            data.replace(i, next - i, include_str);
-            data.replace(i + include_str.size(), 0,
-                         "#line " + std::to_string(line) + "\n");
+            auto [it, succeeded] = included.insert(include_path);
+            if (!succeeded) {
+                std::cerr << "Warning: detected neseted include in " << path
+                          << '\n';
+            } else {
+                std::string include_str(load_shader(include_path, included));
+                data.replace(i, next - i, include_str);
+                data.replace(i + include_str.size(), 0,
+                             "#line " + std::to_string(line) + "\n");
+            }
         }
 
         i = next;
