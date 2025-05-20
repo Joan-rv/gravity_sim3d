@@ -14,8 +14,8 @@ Texture::Texture(const char *path) {
     glBindTexture(GL_TEXTURE_2D, id_);
     int width, height, nr_channels;
     unsigned char *data = stbi_load(path, &width, &height, &nr_channels, 3);
-    assert(nr_channels == 3);
     if (data) {
+        assert(nr_channels == 3);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB,
                      GL_UNSIGNED_BYTE, data);
         glGenerateMipmap(GL_TEXTURE_2D);
